@@ -1,0 +1,70 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Football Manager - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-900 text-white font-sans">
+    <div class="container mx-auto p-6">
+      <header
+        class="flex justify-between items-center border-b border-slate-700 pb-4 mb-8"
+      >
+        <h1 class="text-3xl font-bold text-blue-400" th:text="${team.name}">
+          Nazwa Klubu
+        </h1>
+        <div class="text-right">
+          <p class="text-sm text-slate-400">Budżet</p>
+          <p
+            class="text-xl font-mono text-green-400"
+            th:text="${#numbers.formatDecimal(team.budget, 0, 'WHITESPACE', 0, 'POINT') + ' €'}"
+          >
+            100 000 000 €
+          </p>
+        </div>
+      </header>
+
+      <section class="bg-slate-800 rounded-lg shadow-xl overflow-hidden">
+        <div
+          class="p-4 bg-slate-700 font-bold uppercase tracking-wider text-sm"
+        >
+          Twoja Jedenastka / Skład
+        </div>
+        <table class="w-full text-left">
+          <thead class="bg-slate-700/50 text-slate-300 text-xs uppercase">
+            <tr>
+              <th class="p-4">Imię i Nazwisko</th>
+              <th class="p-4 text-center">Wiek</th>
+              <th class="p-4 text-center">Overall</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-700">
+            <tr
+              th:each="player : ${players}"
+              class="hover:bg-slate-700/30 transition"
+            >
+              <td
+                class="p-4 font-semibold"
+                th:text="${player.firstName + ' ' + player.lastName}"
+              >
+                Jan Kowalski
+              </td>
+              <td
+                class="p-4 text-center text-slate-400"
+                th:text="${player.age}"
+              >
+                25
+              </td>
+              <td class="p-4 text-center">
+                <span
+                  class="bg-blue-600 px-2 py-1 rounded text-xs font-bold"
+                  th:text="${player.overall}"
+                  >85</span
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </body>
+</html>

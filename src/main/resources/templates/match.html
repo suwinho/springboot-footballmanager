@@ -1,0 +1,137 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Match Engine Live</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-900 text-white font-sans">
+    <div class="container mx-auto p-10 max-w-4xl">
+      <div
+        class="bg-blue-100 text-slate-900 p-6 rounded-t-lg flex justify-between items-center shadow-2xl border-b-4 border-blue-300"
+      >
+        <div
+          class="text-2xl font-black uppercase tracking-tighter"
+          th:text="${homeTeam.name}"
+        >
+          HOME
+        </div>
+        <div
+          class="text-5xl font-mono bg-slate-800 text-white px-8 py-2 rounded shadow-inner border-2 border-slate-600"
+        >
+          <span id="homeScore">0</span> - <span id="awayScore">0</span>
+        </div>
+        <div
+          class="text-2xl font-black uppercase tracking-tighter text-right"
+          th:text="${awayTeam.name}"
+        >
+          AWAY
+        </div>
+      </div>
+
+      <div
+        class="grid grid-cols-3 gap-0 bg-blue-50/95 text-slate-800 p-6 min-h-[450px] shadow-xl"
+      >
+        <div class="p-4" id="homeLineup">
+          <div
+            th:each="p : ${homePlayers}"
+            th:id="'player-' + ${p.lastName}"
+            class="flex justify-between items-center mb-2 border-b border-blue-200 pb-1"
+          >
+            <span class="font-bold text-sm" th:text="${p.lastName}"></span>
+            <span class="card-slot"></span>
+          </div>
+        </div>
+
+        <div class="p-4 flex flex-col items-center border-x border-blue-200">
+          <div
+            class="text-center font-black text-3xl mb-6 text-blue-900 italic"
+          >
+            <span id="matchMinute">0</span>'
+          </div>
+          <div
+            class="w-full space-y-3 overflow-y-auto max-h-[350px] px-2"
+            id="matchLog"
+          ></div>
+        </div>
+
+        <div class="p-4 text-right" id="awayLineup">
+          <div
+            th:each="p : ${awayPlayers}"
+            th:id="'player-' + ${p.lastName}"
+            class="flex justify-between items-center flex-row-reverse mb-2 border-b border-blue-200 pb-1"
+          >
+            <span class="font-bold text-sm" th:text="${p.lastName}"></span>
+            <span class="card-slot"></span>
+          </div>
+        </div>
+      </div>
+
+      <button
+        onclick="startMatch()"
+        id="startBtn"
+        class="w-full bg-blue-600 p-5 mt-6 font-black text-xl hover:bg-blue-500 rounded shadow-lg transform transition active:scale-95 uppercase tracking-widest"
+      >
+        Kick Off
+      </button>
+    </div>
+
+    <script th:inline="javascript">
+      const events = [[${matchEvents}]];
+      const homeName = [[${homeTeam.name}]];
+      let currentMin = 0;
+      let homeScore = 0;
+      let awayScore = 0;
+
+      function startMatch() {
+          document.getElementById('startBtn').style.display = 'none';
+          const interval = setInterval(() => {
+              currentMin++;
+              document.getElementById('matchMinute').innerText = currentMin;
+
+              const currentEvents = events.filter(e => e.minute === currentMin);
+              currentEvents.forEach(e => {
+                  const log = document.getElementById('matchLog');
+                  const div = document.createElement('div');
+                  div.className = "p-3 bg-white rounded border-l-4 shadow-md text-[11px] animate-in fade-in slide-in-from-top-2 duration-500";
+
+                  let icon = "⚽";
+                  div.style.borderLeftColor = "#1e40af";
+
+                  if(e.type === 'GOAL') {
+                      if(e.teamName === homeName) homeScore++;
+                      else awayScore++;
+                      document.getElementById('homeScore').innerText = homeScore;
+                      document.getElementById('awayScore').innerText = awayScore;
+                      div.className += " border-green-500 bg-green-50";
+                  }
+
+                  if(e.type === 'YELLOW_CARD') {
+                      icon = "🟨";
+                      div.className += " border-yellow-500 bg-yellow-50";
+                      const playerEl = document.getElementById('player-' + e.playerName);
+                      if(playerEl) {
+                          const slot = playerEl.querySelector('.card-slot');
+                          if(slot && !slot.innerHTML.includes('🟨')) {
+                              slot.innerHTML += '<span class="ml-1 animate-bounce">🟨</span>';
+                          }
+                      }
+                  }
+
+                  if(e.type === 'SAVE') icon = "🧤";
+                  if(e.type === 'MISS') icon = "❌";
+
+                  div.innerHTML = `<div class="flex justify-between font-black text-blue-900 mb-1"><span>${e.minute}'</span><span>${e.teamName}</span></div>
+                                   <div class="flex items-center gap-2">${icon} <strong>${e.playerName}</strong>: ${e.description}</div>`;
+                  log.prepend(div);
+              });
+
+              if (currentMin >= 90) {
+                  clearInterval(interval);
+                  document.getElementById('matchMinute').innerText = "FT";
+              }
+          }, 150);
+      }
+    </script>
+  </body>
+</html>

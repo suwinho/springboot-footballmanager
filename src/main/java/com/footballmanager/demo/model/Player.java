@@ -19,7 +19,8 @@ public class Player {
     private String lastName;
     private int age;
     private int overall;
-
+    private int offensiveStats;
+    private int defensiveStats;
 
     @ManyToOne
     @JoinColumn(name = "team_id")

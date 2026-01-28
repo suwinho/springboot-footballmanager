@@ -1,3 +1,4 @@
+package com.footballmanager.demo.service;
 import org.springframework.stereotype.Service;
 import com.footballmanager.demo.repository.PlayerRepository;
 import com.footballmanager.demo.repository.TeamRepository;
