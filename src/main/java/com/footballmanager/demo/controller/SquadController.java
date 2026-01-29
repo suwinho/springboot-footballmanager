@@ -23,20 +23,19 @@ public class SquadController {
     @GetMapping("/lineup/{teamId}")
     public String showLineupEditor(@PathVariable Long teamId, Model model) {
         Team team = teamRepository.findById(teamId).orElseThrow();
-        
-        // Pobieramy wszystkich graczy i od razu dzielimy ich na dwie grupy
+
         List<Player> allPlayers = team.getPlayers();
-        
+
         List<Player> starters = allPlayers.stream()
-                .filter(p -> p.isInFirstEleven()) // Tylko ci z 'true'
+                .filter(p -> p.isInFirstEleven()) 
                 .distinct()
                 .toList();
-                
+
         List<Player> reserves = allPlayers.stream()
-                .filter(p -> !p.isInFirstEleven()) // Tylko ci z 'false'
+                .filter(p -> !p.isInFirstEleven()) 
                 .distinct()
                 .toList();
-    
+
         model.addAttribute("team", team);
         model.addAttribute("starters", starters);
         model.addAttribute("reserves", reserves);

@@ -171,7 +171,6 @@
       let awayScore = 0;
 
       function addIconToPlayer(playerName, iconEmoji) {
-          // Szukamy po ID, które zawiera nazwisko
           const playerEl = document.getElementById('player-' + playerName);
           if (playerEl) {
               const slot = playerEl.querySelector('.card-slot');
@@ -180,7 +179,6 @@
                   span.className = "animate-bounce inline-block";
                   span.innerText = iconEmoji;
                   slot.appendChild(span);
-                  // Jeśli to rezerwowy, zwiększamy mu widoczność, bo właśnie coś zrobił!
                   playerEl.style.opacity = "1";
               }
           }

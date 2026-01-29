@@ -160,7 +160,6 @@
     </div>
 
     <script>
-      // Funkcja sprawdzająca czy mamy dokładnie 11 zawodników
       function validateLineup() {
         const starters = document.querySelectorAll(
           "#starters-zone .player-card",
@@ -212,7 +211,7 @@
 
         zone.appendChild(playerCard);
         updateCardUI(playerCard, zone.id);
-        validateLineup(); // Walidacja przy każdym przesunięciu
+        validateLineup();
       }
 
       function updateCardUI(card, zoneId) {
@@ -261,7 +260,6 @@
         document.getElementById("starterIdsInput").value = ids.join(",");
       }
 
-      // Inicjalizacja przy starcie strony
       window.onload = validateLineup;
     </script>
   </body>
