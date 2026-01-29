@@ -1,0 +1,268 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tactics Manager - FIFA Style</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .zone {
+        min-height: 550px;
+        transition: all 0.3s ease;
+      }
+      .drag-over {
+        background: rgba(34, 197, 94, 0.15);
+        border: 2px dashed #22c55e;
+        transform: scale(1.005);
+      }
+      .player-card {
+        cursor: grab;
+        transition: all 0.2s ease;
+      }
+      .player-card:active {
+        cursor: grabbing;
+      }
+      .dragging {
+        opacity: 0.4;
+        transform: scale(0.9);
+      }
+    </style>
+  </head>
+  <body class="bg-slate-950 text-slate-100 font-sans">
+    <div class="container mx-auto p-6 max-w-6xl">
+      <header
+        class="flex justify-between items-center mb-10 border-b border-slate-800 pb-6"
+      >
+        <div>
+          <h1
+            class="text-4xl font-black uppercase italic tracking-tighter"
+            th:text="${team.name}"
+          >
+            TEAM
+          </h1>
+          <p class="text-slate-500 text-sm font-bold tracking-widest uppercase">
+            Zarządzanie Taktyką
+          </p>
+        </div>
+
+        <div class="flex flex-col items-end">
+          <form
+            th:action="@{'/lineup/' + ${team.id} + '/save'}"
+            method="post"
+            id="saveForm"
+          >
+            <input type="hidden" name="starterIds" id="starterIdsInput" />
+            <button
+              type="submit"
+              id="saveButton"
+              onclick="prepareSubmit()"
+              class="disabled:opacity-30 disabled:cursor-not-allowed bg-blue-600 hover:bg-blue-500 text-white font-black px-10 py-4 rounded-full shadow-lg transition-all active:scale-95 uppercase"
+              disabled
+            >
+              Zapisz Skład
+            </button>
+          </form>
+          <p
+            id="playerCount"
+            class="text-right text-xs mt-3 font-bold text-red-500 uppercase tracking-widest animate-pulse"
+          >
+            Wybierz jeszcze 11 zawodników
+          </p>
+        </div>
+      </header>
+
+      <div class="grid grid-cols-2 gap-10">
+        <section>
+          <h2
+            class="text-green-400 font-black mb-4 flex items-center gap-2 uppercase tracking-tight"
+          >
+            <span
+              class="w-3 h-3 bg-green-400 rounded-full shadow-[0_0_10px_#4ade80]"
+            ></span>
+            Wyjściowy Skład (XI)
+          </h2>
+          <div
+            id="starters-zone"
+            class="zone bg-slate-900/50 rounded-3xl p-6 border-2 border-slate-800"
+            ondragover="allowDrop(event)"
+            ondrop="drop(event)"
+            ondragleave="removeHighlight(event)"
+          >
+            <div
+              th:each="p : ${starters}"
+              th:id="'p-' + ${p.id}"
+              th:data-id="${p.id}"
+              class="player-card bg-slate-800 p-4 mb-3 rounded-2xl flex justify-between items-center border border-slate-700 shadow-xl"
+              draggable="true"
+              ondragstart="drag(event)"
+            >
+              <div class="flex items-center gap-4">
+                <div
+                  class="ovr-circle w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-black text-sm"
+                  th:text="${p.overall}"
+                ></div>
+                <div>
+                  <p
+                    class="player-name font-bold leading-none text-white"
+                    th:text="${p.lastName}"
+                  ></p>
+                  <p
+                    class="text-[10px] text-slate-500 uppercase mt-1"
+                    th:text="'Atk: ' + ${p.offensiveStats} + ' Def: ' + ${p.defensiveStats}"
+                  ></p>
+                </div>
+              </div>
+              <div class="badge text-green-500 font-black uppercase">XI</div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2
+            class="text-slate-500 font-black mb-4 uppercase tracking-tight ml-2"
+          >
+            Ławka Rezerwowych
+          </h2>
+          <div
+            id="reserves-zone"
+            class="zone bg-slate-900/50 rounded-3xl p-6 border-2 border-slate-800"
+            ondragover="allowDrop(event)"
+            ondrop="drop(event)"
+            ondragleave="removeHighlight(event)"
+          >
+            <div
+              th:each="p : ${reserves}"
+              th:id="'p-' + ${p.id}"
+              th:data-id="${p.id}"
+              class="player-card bg-slate-900 p-4 mb-3 rounded-2xl flex justify-between items-center border border-slate-800 opacity-70"
+              draggable="true"
+              ondragstart="drag(event)"
+            >
+              <div class="flex items-center gap-4">
+                <div
+                  class="ovr-circle w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center font-black text-sm text-slate-400"
+                  th:text="${p.overall}"
+                ></div>
+                <div>
+                  <p
+                    class="player-name font-bold leading-none text-slate-400"
+                    th:text="${p.lastName}"
+                  ></p>
+                  <p class="text-[10px] text-slate-600 uppercase mt-1">
+                    REZERWA
+                  </p>
+                </div>
+              </div>
+              <div class="badge text-slate-700 font-black uppercase">SUB</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      // Funkcja sprawdzająca czy mamy dokładnie 11 zawodników
+      function validateLineup() {
+        const starters = document.querySelectorAll(
+          "#starters-zone .player-card",
+        );
+        const count = starters.length;
+        const saveButton = document.getElementById("saveButton");
+        const counterText = document.getElementById("playerCount");
+
+        if (count === 11) {
+          saveButton.disabled = false;
+          counterText.innerText = "SKŁAD KOMPLETNY (11/11)";
+          counterText.className =
+            "text-right text-xs mt-3 font-bold text-green-400 uppercase tracking-widest";
+        } else {
+          saveButton.disabled = true;
+          const diff = 11 - count;
+          if (count < 11) {
+            counterText.innerText = `DOŁÓŻ JESZCZE ${diff} ZAWODNIKÓW`;
+          } else {
+            counterText.innerText = `ZA DUŻO O ${count - 11} ZAWODNIKÓW`;
+          }
+          counterText.className =
+            "text-right text-xs mt-3 font-bold text-red-500 uppercase tracking-widest animate-pulse";
+        }
+      }
+
+      function allowDrop(ev) {
+        ev.preventDefault();
+        ev.currentTarget.classList.add("drag-over");
+      }
+
+      function removeHighlight(ev) {
+        ev.currentTarget.classList.remove("drag-over");
+      }
+
+      function drag(ev) {
+        ev.dataTransfer.setData("text/plain", ev.target.id);
+        ev.target.classList.add("dragging");
+      }
+
+      function drop(ev) {
+        ev.preventDefault();
+        const zone = ev.currentTarget;
+        zone.classList.remove("drag-over");
+
+        const playerCardId = ev.dataTransfer.getData("text/plain");
+        const playerCard = document.getElementById(playerCardId);
+        playerCard.classList.remove("dragging");
+
+        zone.appendChild(playerCard);
+        updateCardUI(playerCard, zone.id);
+        validateLineup(); // Walidacja przy każdym przesunięciu
+      }
+
+      function updateCardUI(card, zoneId) {
+        const isStarter = zoneId === "starters-zone";
+        const badge = card.querySelector(".badge");
+        const ovrCircle = card.querySelector(".ovr-circle");
+        const nameText = card.querySelector(".player-name");
+
+        if (isStarter) {
+          card.classList.remove("bg-slate-900", "opacity-70");
+          card.classList.add(
+            "bg-slate-800",
+            "opacity-100",
+            "shadow-xl",
+            "border-slate-700",
+          );
+          badge.innerText = "XI";
+          badge.className = "badge text-green-500 font-black uppercase";
+          ovrCircle.className =
+            "ovr-circle w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-black text-sm text-white";
+          nameText.className = "player-name font-bold leading-none text-white";
+        } else {
+          card.classList.remove(
+            "bg-slate-800",
+            "opacity-100",
+            "shadow-xl",
+            "border-slate-700",
+          );
+          card.classList.add("bg-slate-900", "opacity-70");
+          badge.innerText = "SUB";
+          badge.className = "badge text-slate-700 font-black uppercase";
+          ovrCircle.className =
+            "ovr-circle w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center font-black text-sm text-slate-400";
+          nameText.className =
+            "player-name font-bold leading-none text-slate-400";
+        }
+      }
+
+      function prepareSubmit() {
+        const starterCards = document.querySelectorAll(
+          "#starters-zone .player-card",
+        );
+        const ids = Array.from(starterCards).map((c) =>
+          c.getAttribute("data-id"),
+        );
+        document.getElementById("starterIdsInput").value = ids.join(",");
+      }
+
+      // Inicjalizacja przy starcie strony
+      window.onload = validateLineup;
+    </script>
+  </body>
+</html>

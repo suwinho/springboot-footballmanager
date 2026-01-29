@@ -55,10 +55,11 @@ public class MatchService {
 
     private double calculateFormationsStrength(Team team, boolean offensive) {
         return team.getPlayers().stream()
-                .mapToDouble(p -> offensive ? p.getOffensiveStats() : p.getDefensiveStats())
-                .average().orElse(50.0);
+            .filter(p -> p.isInFirstEleven()) 
+            .mapToDouble(p -> offensive ? p.getOffensiveStats() : p.getDefensiveStats())
+            .average()
+            .orElse(0.0);
     }
-
     private MatchEvent resolveAction(Team attacker, Team defender, int min, Random rand) {
         Player forward = attacker.getPlayers().stream().max(Comparator.comparingInt(Player::getOffensiveStats)).get();
         Player goalie = defender.getPlayers().stream().max(Comparator.comparingInt(Player::getDefensiveStats)).get();

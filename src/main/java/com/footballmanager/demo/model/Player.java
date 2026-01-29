@@ -21,6 +21,7 @@ public class Player {
     private int overall;
     private int offensiveStats;
     private int defensiveStats;
+    private boolean isInFirstEleven;
 
     @ManyToOne
     @JoinColumn(name = "team_id")
