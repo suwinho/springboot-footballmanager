@@ -5,7 +5,10 @@ import com.footballmanager.demo.repository.PlayerRepository;
 import com.footballmanager.demo.repository.TeamRepository;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.footballmanager.demo.repository.GameStateRepository;
 import com.footballmanager.demo.repository.MatchRepository;
+import com.footballmanager.demo.model.GameState;
 import com.footballmanager.demo.model.Player;
 import com.footballmanager.demo.model.Team;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ public class CarrerService {
     @Autowired
     private final PlayerRepository playerRepository;
     private final MatchRepository matchRepository;
+    private final GameStateRepository gameStateRepository;
 
     @Transactional 
     public String transferPlayer(Long playerID, Long targetTeamID) {
@@ -39,5 +43,12 @@ public class CarrerService {
             teamRepository.save(targetTeam);
         }
         return "Success";
+    }
+
+    @Transactional
+    public void advanceDay() {
+        GameState gameState = gameStateRepository.findById(1L).get();
+        gameState.setGameDate(gameState.getGameDate().plusDays(1));
+        gameStateRepository.save(gameState);
     }
 }

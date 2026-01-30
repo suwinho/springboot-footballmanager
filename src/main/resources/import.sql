@@ -108,3 +108,5 @@ INSERT INTO league_table (team_id, matches_played, wins, draws, losses, goals_sc
 INSERT INTO league_table (team_id, matches_played, wins, draws, losses, goals_scored, goals_conceded, points) VALUES (4, 0, 0, 0, 0, 0, 0, 0);
 
 UPDATE players SET market_value = (overall * 1000000) - (age * 500000);
+
+INSERT INTO game_state (id, game_date, current_week) VALUES (1, '2026-01-30', 1);
