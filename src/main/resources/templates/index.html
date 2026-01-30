@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Football Manager - Office</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -12,259 +11,277 @@
         border: 1px solid rgba(255, 255, 255, 0.05);
       }
       .club-badge {
-        width: 80px;
-        height: 95px;
+        width: 70px;
+        height: 85px;
         background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
         clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 50% 100%, 0% 75%);
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 900;
-        font-size: 2.5rem;
+        font-size: 2rem;
         color: white;
         border: 2px solid rgba(255, 255, 255, 0.1);
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #1e40af;
+        border-radius: 10px;
       }
     </style>
   </head>
   <body class="bg-slate-950 text-slate-100 font-sans min-h-screen">
     <div class="container mx-auto p-6 max-w-7xl">
-      <nav class="flex justify-between items-center mb-8 px-4">
+      <nav
+        class="flex justify-between items-center mb-8 px-4 glass py-4 rounded-2xl"
+      >
         <div class="flex items-center gap-4">
-          <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+          <div
+            class="w-3 h-3 bg-green-500 rounded-full shadow-[0_0_10px_#22c55e]"
+          ></div>
           <span
-            class="text-xs font-black uppercase tracking-[0.3em] text-slate-500"
-            >System Online</span
+            class="text-[10px] font-black uppercase tracking-widest text-slate-400"
+            >Manager Office Live</span
           >
         </div>
-        <div class="flex gap-6">
+        <div class="flex gap-8">
           <a
             href="/transfer"
-            class="text-xs font-bold uppercase text-slate-400 hover:text-blue-400 transition"
-            >Rynek Transferowy</a
+            class="text-[10px] font-black uppercase text-slate-400 hover:text-blue-400 transition tracking-widest"
+            >Rynek</a
           >
           <a
             href="/table"
-            class="text-xs font-bold uppercase text-slate-400 hover:text-blue-400 transition"
-            >Tabela Ligowa</a
+            class="text-[10px] font-black uppercase text-slate-400 hover:text-blue-400 transition tracking-widest"
+            >Tabela</a
           >
           <a
             th:href="@{'/lineup/' + ${team.id}}"
-            class="text-xs font-bold uppercase text-slate-400 hover:text-blue-400 transition"
-            >Moja Taktyka</a
+            class="text-[10px] font-black uppercase text-slate-400 hover:text-blue-400 transition tracking-widest"
+            >Skład</a
           >
         </div>
+        <form
+          th:action="@{/generate-season}"
+          method="post"
+          th:if="${upcomingMatches.empty}"
+        >
+          <button
+            type="submit"
+            class="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded-2xl font-black uppercase italic text-xs tracking-widest shadow-lg shadow-red-900/40"
+          >
+            ⚠️ Generuj Terminarz Sezonu
+          </button>
+        </form>
       </nav>
 
       <div class="grid grid-cols-12 gap-8">
         <div class="col-span-12 lg:col-span-4 space-y-8">
           <div
-            class="glass p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden"
+            class="glass p-8 rounded-[2.5rem] relative overflow-hidden shadow-2xl"
           >
-            <div
-              class="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 rounded-full -mr-16 -mt-16 blur-3xl"
-            ></div>
-            <div class="relative z-10 flex flex-col items-center text-center">
-              <div class="club-badge mb-6 shadow-2xl">
+            <div class="relative z-10 flex flex-col items-center">
+              <div class="club-badge mb-4 shadow-xl shadow-blue-900/40">
                 <span th:text="${team.name.substring(0,1)}">M</span>
               </div>
               <h1
-                class="text-4xl font-black uppercase italic tracking-tighter mb-2"
+                class="text-3xl font-black uppercase italic tracking-tighter"
                 th:text="${team.name}"
               >
-                MANCHESTER CITY
+                Klub
               </h1>
               <p
-                class="text-blue-400 text-[10px] font-black uppercase tracking-[0.4em] mb-6"
+                class="text-blue-500 text-[10px] font-black tracking-[0.3em] uppercase mt-2 mb-6"
               >
-                Manager Mode Active
+                Premier Division
               </p>
 
               <div
-                class="w-full grid grid-cols-2 gap-4 border-t border-white/5 pt-6"
+                class="w-full grid grid-cols-2 gap-4 pt-6 border-t border-white/5"
               >
-                <div>
-                  <p
-                    class="text-[9px] text-slate-500 uppercase font-bold tracking-widest"
-                  >
+                <div class="text-center">
+                  <p class="text-[9px] text-slate-500 uppercase font-bold mb-1">
                     Budżet
                   </p>
                   <p
-                    class="text-lg font-mono font-bold text-green-400"
+                    class="text-sm font-mono font-bold text-green-400"
                     th:text="${#numbers.formatDecimal(team.budget, 0, 'WHITESPACE', 0, 'POINT') + ' €'}"
                   >
-                    100M €
+                    0
                   </p>
                 </div>
-                <div>
-                  <p
-                    class="text-[9px] text-slate-500 uppercase font-bold tracking-widest"
-                  >
+                <div class="text-center">
+                  <p class="text-[9px] text-slate-500 uppercase font-bold mb-1">
                     Kadra
                   </p>
                   <p
-                    class="text-lg font-bold text-white"
-                    th:text="${players.size() + ' Graczy'}"
+                    class="text-sm font-bold text-white"
+                    th:text="${players.size()}"
                   >
-                    24
+                    0
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="glass p-8 rounded-[2.5rem] border-t-4 border-purple-600">
-            <div class="flex justify-between items-start mb-6">
-              <div>
-                <p
-                  class="text-[10px] text-slate-500 font-black uppercase tracking-widest"
-                >
-                  Kalendarz Sezonu
-                </p>
-                <h2
-                  class="text-3xl font-black text-white mt-1"
-                  th:text="${gameState.gameDate}"
-                >
-                  2026-01-30
-                </h2>
-              </div>
-              <div class="bg-purple-600/20 p-3 rounded-2xl">
-                <svg
-                  class="w-6 h-6 text-purple-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                  />
-                </svg>
-              </div>
-            </div>
+          <div
+            class="glass p-8 rounded-[2.5rem] border-t-4 border-blue-600 shadow-2xl"
+          >
+            <p
+              class="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1"
+            >
+              Bieżąca Data
+            </p>
+            <h2
+              class="text-3xl font-black text-white mb-6 font-mono"
+              th:text="${gameState.gameDate}"
+            >
+              2026-01-30
+            </h2>
 
             <form th:action="@{/advance-day}" method="post">
               <button
                 type="submit"
-                class="w-full bg-purple-600 hover:bg-purple-500 text-white py-4 rounded-2xl font-black uppercase italic tracking-tighter transition-all transform hover:scale-[1.02] shadow-xl shadow-purple-900/20"
+                class="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-black uppercase italic transition-all transform active:scale-95 shadow-lg shadow-blue-900/40"
               >
                 Kontynuuj Dzień ➔
               </button>
             </form>
-            <p
-              class="text-center text-[9px] text-slate-600 uppercase mt-4 font-bold tracking-widest"
+          </div>
+
+          <div class="glass p-6 rounded-[2.5rem]">
+            <h3
+              class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4"
             >
-              Brak zaplanowanych meczów na dziś
-            </p>
+              Czołówka Tabeli
+            </h3>
+            <div class="space-y-3">
+              <div
+                th:each="entry, iter : ${leagueTable}"
+                th:if="${iter.index < 4}"
+                class="flex justify-between items-center bg-slate-800/30 p-3 rounded-xl border border-white/5"
+              >
+                <div class="flex gap-3 items-center">
+                  <span
+                    class="text-[10px] font-mono text-slate-600"
+                    th:text="${iter.count}"
+                    >1</span
+                  >
+                  <span
+                    class="text-xs font-bold uppercase italic"
+                    th:text="${entry.team.name}"
+                    >Team</span
+                  >
+                </div>
+                <span
+                  class="text-xs font-black text-blue-400"
+                  th:text="${entry.points}"
+                  >0</span
+                >
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="col-span-12 lg:col-span-8 space-y-8">
-          <div class="glass p-1 rounded-[2.5rem] overflow-hidden group">
-            <a
-              th:href="@{'/match/simulate/' + ${team.id} + '/2'}"
-              class="block bg-gradient-to-r from-blue-600 to-indigo-700 p-10 rounded-[2.4rem] hover:from-blue-500 hover:to-indigo-600 transition-all"
-            >
-              <div class="flex justify-between items-center">
-                <div>
-                  <h2
-                    class="text-5xl font-black italic uppercase tracking-tighter text-white mb-2"
-                  >
-                    Następny Mecz
-                  </h2>
-                  <p
-                    class="text-blue-200 font-bold uppercase text-xs tracking-[0.3em]"
-                  >
-                    Premier League • Kolejka 14
-                  </p>
-                </div>
-                <div
-                  class="bg-white/10 p-6 rounded-full group-hover:rotate-12 transition-transform"
-                >
-                  <span class="text-5xl">⚽</span>
-                </div>
-              </div>
-            </a>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="glass p-6 rounded-[2.5rem]">
-              <h3
-                class="text-xs font-black uppercase tracking-widest text-slate-500 mb-6"
-              >
-                Czołówka Tabeli
-              </h3>
-              <table class="w-full text-sm">
-                <tr
-                  th:each="entry, iter : ${leagueTable}"
-                  th:if="${iter.index < 5}"
-                  class="border-b border-white/5"
-                >
-                  <td
-                    class="py-3 font-mono text-slate-500"
-                    th:text="${iter.count}"
-                  >
-                    1
-                  </td>
-                  <td
-                    class="py-3 font-bold uppercase italic text-[11px]"
-                    th:text="${entry.team.name}"
-                  >
-                    Team
-                  </td>
-                  <td
-                    class="py-3 text-right font-black text-blue-400"
-                    th:text="${entry.points}"
-                  >
-                    0
-                  </td>
-                </tr>
-              </table>
-              <a
-                href="/table"
-                class="block text-center text-[10px] font-black uppercase text-blue-500 mt-6 hover:text-blue-300 transition"
-                >Pełna Tabela</a
+        <div class="col-span-12 lg:col-span-8">
+          <div
+            class="glass p-8 rounded-[2.5rem] h-full shadow-2xl overflow-hidden flex flex-col"
+          >
+            <div class="flex justify-between items-center mb-8">
+              <h2 class="text-2xl font-black uppercase italic tracking-tighter">
+                Terminarz Rozgrywek
+              </h2>
+              <span
+                class="bg-blue-500/10 text-blue-500 text-[10px] px-3 py-1 rounded-full font-bold border border-blue-500/20 uppercase tracking-widest"
+                >Sezon 2025/26</span
               >
             </div>
 
-            <div
-              class="glass p-6 rounded-[2.5rem] flex flex-col justify-between"
-            >
-              <div>
-                <h3
-                  class="text-xs font-black uppercase tracking-widest text-slate-500 mb-6"
-                >
-                  Wiadomości
-                </h3>
-                <div class="space-y-4">
-                  <div class="border-l-2 border-blue-500 pl-4">
-                    <p
-                      class="text-[11px] font-bold text-white uppercase italic"
+            <div class="space-y-4 overflow-y-auto pr-2 max-h-[600px]">
+              <div
+                th:each="m : ${upcomingMatches}"
+                class="flex items-center justify-between p-6 rounded-2xl transition-all border border-white/5 hover:bg-white/5"
+                th:classappend="${m.date == gameState.gameDate} ? 'bg-blue-600/10 border-blue-600/30 ring-1 ring-blue-600/30' : 'bg-slate-800/20'"
+              >
+                <div class="w-24">
+                  <p
+                    class="text-[10px] font-black text-slate-500 uppercase tracking-tighter"
+                    th:text="${m.date}"
+                  >
+                    DATA
+                  </p>
+                  <p
+                    th:if="${m.date == gameState.gameDate}"
+                    class="text-[9px] font-bold text-blue-400 animate-pulse uppercase"
+                  >
+                    Dzisiaj!
+                  </p>
+                </div>
+
+                <div class="flex-1 flex items-center justify-center gap-6">
+                  <div class="text-right flex-1">
+                    <span
+                      class="text-sm font-black uppercase italic tracking-tight"
+                      th:text="${m.homeTeam.name}"
+                      >HOME</span
                     >
-                      Otwarcie okna transferowego
-                    </p>
-                    <p class="text-[10px] text-slate-500">
-                      Kluby mają 30 dni na wzmocnienia.
-                    </p>
                   </div>
-                  <div class="border-l-2 border-slate-700 pl-4 opacity-50">
-                    <p
-                      class="text-[11px] font-bold text-white uppercase italic"
+
+                  <div
+                    class="bg-slate-950 px-4 py-2 rounded-xl border border-white/10 min-w-[80px] text-center shadow-inner"
+                  >
+                    <span
+                      th:if="${m.played}"
+                      class="text-lg font-mono font-black text-white"
+                      th:text="${m.homeGoals + ' - ' + m.awayGoals}"
+                      >0 - 0</span
                     >
-                      Trening poranny zakończony
-                    </p>
-                    <p class="text-[10px] text-slate-500">
-                      Wszyscy zawodnicy są gotowi do gry.
-                    </p>
+                    <span
+                      th:unless="${m.played}"
+                      class="text-xs font-black text-slate-600 tracking-widest"
+                      >VS</span
+                    >
+                  </div>
+
+                  <div class="text-left flex-1">
+                    <span
+                      class="text-sm font-black uppercase italic tracking-tight"
+                      th:text="${m.awayTeam.name}"
+                      >AWAY</span
+                    >
                   </div>
                 </div>
+
+                <div class="w-24 text-right">
+                  <a
+                    th:if="${m.date == gameState.gameDate && !m.played && (m.homeTeam.id == team.id || m.awayTeam.id == team.id)}"
+                    th:href="@{'/match/simulate/' + ${m.homeTeam.id} + '/' + ${m.awayTeam.id}}"
+                    class="bg-white text-slate-950 px-4 py-2 rounded-lg text-[10px] font-black uppercase hover:bg-blue-600 hover:text-white transition"
+                  >
+                    Graj
+                  </a>
+                  <span
+                    th:if="${m.played}"
+                    class="text-[9px] font-black text-green-500 uppercase tracking-widest"
+                    >Koniec</span
+                  >
+                  <span
+                    th:if="${!m.played && m.date != gameState.gameDate}"
+                    class="text-[9px] font-bold text-slate-700 uppercase tracking-widest italic"
+                    >Nadchodzi</span
+                  >
+                </div>
               </div>
-              <p
-                class="text-[9px] text-slate-700 font-bold uppercase mt-6 tracking-tighter text-right"
-              >
-                FIFA Manager Engine v1.0
-              </p>
+            </div>
+
+            <div
+              class="mt-auto pt-8 border-t border-white/5 flex justify-between items-center text-[9px] text-slate-600 font-bold uppercase tracking-widest"
+            >
+              <p>FIFA Manager Engine v1.2</p>
+              <p>Wszystkie mecze symulowane w czasie rzeczywistym</p>
             </div>
           </div>
         </div>

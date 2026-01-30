@@ -1,6 +1,6 @@
 package com.footballmanager.demo.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +20,6 @@ public class Match {
 
     private int homeGoals;
     private int awayGoals;
-    private LocalDateTime date;
+    private LocalDate date;
     private boolean played = false; 
 }
