@@ -1,0 +1,134 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>League Standings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-950 text-white font-sans min-h-screen p-10">
+    <div class="container mx-auto max-w-5xl">
+      <div
+        class="flex justify-between items-end mb-8 border-b-2 border-blue-600 pb-4"
+      >
+        <div>
+          <h1 class="text-5xl font-black italic uppercase tracking-tighter">
+            Premier League
+          </h1>
+          <p
+            class="text-blue-400 font-bold uppercase text-xs tracking-widest mt-2"
+          >
+            Season 2025/26 Standings
+          </p>
+        </div>
+        <a
+          href="/dashboard"
+          class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded text-xs font-bold transition"
+          >BACK TO OFFICE</a
+        >
+      </div>
+
+      <div
+        class="bg-slate-900/50 backdrop-blur-md rounded-xl shadow-2xl overflow-hidden border border-slate-800"
+      >
+        <table class="w-full text-left">
+          <thead>
+            <tr
+              class="bg-slate-800/50 text-slate-400 text-[10px] uppercase tracking-[0.2em]"
+            >
+              <th class="px-6 py-4 w-16">Pos</th>
+              <th class="px-6 py-4">Club</th>
+              <th class="px-6 py-4 text-center">PL</th>
+              <th class="px-6 py-4 text-center">W</th>
+              <th class="px-6 py-4 text-center">D</th>
+              <th class="px-6 py-4 text-center">L</th>
+              <th class="px-6 py-4 text-center">GD</th>
+              <th
+                class="px-6 py-4 text-center font-black text-white bg-blue-600/20"
+              >
+                PTS
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/50">
+            <tr
+              th:each="entry, iter : ${leagueTable}"
+              class="hover:bg-blue-900/10 transition-colors group"
+            >
+              <td
+                class="px-6 py-5 font-mono text-lg text-slate-500 group-hover:text-blue-400"
+                th:text="${iter.count}"
+              >
+                1
+              </td>
+
+              <td class="px-6 py-5">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-2 h-8 bg-blue-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  ></div>
+                  <span
+                    class="text-xl font-black tracking-tight uppercase"
+                    th:text="${entry.team.name}"
+                    >TEAM NAME</span
+                  >
+                </div>
+              </td>
+
+              <td
+                class="px-6 py-5 text-center font-medium"
+                th:text="${entry.matchesPlayed}"
+              >
+                0
+              </td>
+              <td
+                class="px-6 py-5 text-center text-green-400 font-bold"
+                th:text="${entry.wins}"
+              >
+                0
+              </td>
+              <td
+                class="px-6 py-5 text-center text-slate-400"
+                th:text="${entry.draws}"
+              >
+                0
+              </td>
+              <td
+                class="px-6 py-5 text-center text-red-400"
+                th:text="${entry.losses}"
+              >
+                0
+              </td>
+
+              <td
+                class="px-6 py-5 text-center font-mono text-sm text-slate-500"
+                th:text="${(entry.goalsScored - entry.goalsConceded) > 0 ? '+' + (entry.goalsScored - entry.goalsConceded) : (entry.goalsScored - entry.goalsConceded)}"
+              >
+                0
+              </td>
+
+              <td
+                class="px-6 py-5 text-center font-black text-2xl text-blue-400 bg-blue-600/5"
+                th:text="${entry.points}"
+              >
+                0
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        class="mt-6 flex gap-6 text-[10px] text-slate-500 uppercase tracking-widest font-bold"
+      >
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+          Champions League
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+          Relegation
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

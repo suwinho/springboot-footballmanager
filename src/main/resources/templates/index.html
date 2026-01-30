@@ -6,6 +6,32 @@
   </head>
   <body>
     <h1>Witaj w trybie Kariery!</h1>
-    <a href="/dashboard/1">Przejdź do Manchester City</a>
+    <nav
+      class="flex gap-4 mb-10 bg-slate-800 p-4 rounded-2xl border border-slate-700"
+    >
+      <a
+        href="/dashboard/1"
+        class="text-blue-400 font-bold px-4 py-2 hover:bg-slate-700 rounded-xl transition"
+        >🏠 Biuro</a
+      >
+      <a
+        href="/lineup/1"
+        class="text-slate-300 font-bold px-4 py-2 hover:bg-slate-700 rounded-xl transition"
+        >📋 Taktyka</a
+      >
+      <a
+        href="/table"
+        class="text-slate-300 font-bold px-4 py-2 hover:bg-slate-700 rounded-xl transition"
+        >🏆 Tabela</a
+      >
+      <div class="ml-auto">
+        <a
+          th:href="@{'/match/simulate/' + ${team.id} + '/2'}"
+          class="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-xl font-black uppercase italic shadow-lg shadow-green-900/50 transition"
+        >
+          Następny Mecz ➔
+        </a>
+      </div>
+    </nav>
   </body>
 </html>

@@ -17688,3 +17688,794 @@ C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballma
 30 errors.
 2026.01.29 19:05:26 WARN  javac exited with exit code 1
 2026.01.29 19:05:26 INFO  time: compiled demo in 1.32s
+sty 29, 2026 7:12:40 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6313
+sty 29, 2026 7:12:41 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6320
+2026.01.29 19:12:45 INFO  Created report: Optional[file:///C:/Users/Mateusz/Desktop/springboot-footballmanager/src/main/java/com/footballmanager/demo/controller/SquadController.java]
+2026.01.29 19:12:45 INFO  empty definition using pc, found symbol in pc:  (full report at: "C:\Users\Mateusz\Desktop\springboot-footballmanager\.metals\.reports\metals-full\2026-01-29\r_empty-definition_(demo)_19-12-45-753.md")
+2026.01.29 19:12:45 INFO  compiling demo (14 java sources)
+2026.01.29 19:12:47 WARN  Unexpected javac output: WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by com.sourcegraph.shaded.com.google.protobuf.UnsafeUtil$MemoryAccessor (file:/C:/Users/Mateusz/AppData/Local/bloop/cache/semanticdb/com.sourcegraph.semanticdb-javac.0.11.2/semanticdb-javac-0.11.2.jar)
+WARNING: Please consider reporting this to the maintainers of class com.sourcegraph.shaded.com.google.protobuf.UnsafeUtil$MemoryAccessor
+WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\MatchController.java:29: error: cannot find symbol
+        model.addAttribute("homePlayers", home.getPlayers());
+                                              ^
+  symbol:   method getPlayers()
+  location: variable home of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\MatchController.java:30: error: cannot find symbol
+        model.addAttribute("awayPlayers", away.getPlayers());
+                                              ^
+  symbol:   method getPlayers()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:37: error: cannot find symbol
+                        if (result.getType().equals("GOAL")) homeScore++;
+                                  ^
+  symbol:   method getType()
+  location: variable result of type MatchEvent
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:43: error: cannot find symbol
+                        if (result.getType().equals("GOAL")) awayScore++;
+                                  ^
+  symbol:   method getType()
+  location: variable result of type MatchEvent
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:49: error: cannot find symbol
+                Player p = away.getPlayers().get(rand.nextInt(away.getPlayers().size()));
+                               ^
+  symbol:   method getPlayers()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:49: error: cannot find symbol
+                Player p = away.getPlayers().get(rand.nextInt(away.getPlayers().size()));
+                                                                  ^
+  symbol:   method getPlayers()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:50: error: cannot find symbol
+                events.add(new MatchEvent(min, "YELLOW_CARD", "Faul!", away.getName(), p.getLastName()));
+                                                                                        ^
+  symbol:   method getLastName()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:50: error: cannot find symbol
+                events.add(new MatchEvent(min, "YELLOW_CARD", "Faul!", away.getName(), p.getLastName()));
+                                                                           ^
+  symbol:   method getName()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:57: error: cannot find symbol
+        return team.getPlayers().stream()
+                   ^
+  symbol:   method getPlayers()
+  location: variable team of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:64: error: cannot find symbol
+        Player forward = attacker.getPlayers().stream().max(Comparator.comparingInt(Player::getOffensiveStats)).get();
+                                 ^
+  symbol:   method getPlayers()
+  location: variable attacker of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:64: error: invalid method reference
+        Player forward = attacker.getPlayers().stream().max(Comparator.comparingInt(Player::getOffensiveStats)).get();
+                                                                                    ^
+  cannot find symbol
+    symbol:   method getOffensiveStats()
+    location: class Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:65: error: cannot find symbol
+        Player goalie = defender.getPlayers().stream().max(Comparator.comparingInt(Player::getDefensiveStats)).get();
+                                ^
+  symbol:   method getPlayers()
+  location: variable defender of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:65: error: invalid method reference
+        Player goalie = defender.getPlayers().stream().max(Comparator.comparingInt(Player::getDefensiveStats)).get();
+                                                                                   ^
+  cannot find symbol
+    symbol:   method getDefensiveStats()
+    location: class Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:67: error: cannot find symbol
+        double scoringChance = (forward.getOffensiveStats() * 1.2) - (goalie.getDefensiveStats() * 0.8);
+                                       ^
+  symbol:   method getOffensiveStats()
+  location: variable forward of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:67: error: cannot find symbol
+        double scoringChance = (forward.getOffensiveStats() * 1.2) - (goalie.getDefensiveStats() * 0.8);
+                                                                            ^
+  symbol:   method getDefensiveStats()
+  location: variable goalie of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:71: error: cannot find symbol
+            return new MatchEvent(min, "GOAL", "GOOOLLLL!", attacker.getName(), forward.getLastName());
+                                                                                       ^
+  symbol:   method getLastName()
+  location: variable forward of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:71: error: cannot find symbol
+            return new MatchEvent(min, "GOAL", "GOOOLLLL!", attacker.getName(), forward.getLastName());
+                                                                    ^
+  symbol:   method getName()
+  location: variable attacker of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:73: error: cannot find symbol
+            return new MatchEvent(min, "SAVE", "Bramkarz obroni�", defender.getName(), goalie.getLastName());
+                                                                                             ^
+  symbol:   method getLastName()
+  location: variable goalie of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:73: error: cannot find symbol
+            return new MatchEvent(min, "SAVE", "Bramkarz obroni�", defender.getName(), goalie.getLastName());
+                                                                           ^
+  symbol:   method getName()
+  location: variable defender of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:75: error: cannot find symbol
+            return new MatchEvent(min, "MISS", "Niecelny strza�!", attacker.getName(), forward.getLastName());
+                                                                                              ^
+  symbol:   method getLastName()
+  location: variable forward of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:75: error: cannot find symbol
+            return new MatchEvent(min, "MISS", "Niecelny strza�!", attacker.getName(), forward.getLastName());
+                                                                           ^
+  symbol:   method getName()
+  location: variable attacker of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\SquadController.java:27: error: cannot find symbol
+        List<Player> allPlayers = team.getPlayers();
+                                      ^
+  symbol:   method getPlayers()
+  location: variable team of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\SquadController.java:30: error: cannot find symbol
+                .filter(p -> p.isInFirstEleven()) 
+                              ^
+  symbol:   method isInFirstEleven()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\SquadController.java:35: error: cannot find symbol
+                .filter(p -> !p.isInFirstEleven()) 
+                               ^
+  symbol:   method isInFirstEleven()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\TeamService.java:21: error: cannot find symbol
+            p.setInFirstEleven(starterIds.contains(p.getId()));
+                                                    ^
+  symbol:   method getId()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\ViewController.java:26: error: cannot find symbol
+        model.addAttribute("players", team.getPlayers());
+                                          ^
+  symbol:   method getPlayers()
+  location: variable team of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:24: error: cannot find symbol
+        long price = player.getOverall() * 100000;
+                           ^
+  symbol:   method getOverall()
+  location: variable player of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:26: error: cannot find symbol
+        if (targetTeam.getBudget() >= price) {
+                      ^
+  symbol:   method getBudget()
+  location: variable targetTeam of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:27: error: cannot find symbol
+            targetTeam.setBudget(targetTeam.getBudget() - price);
+                                           ^
+  symbol:   method getBudget()
+  location: variable targetTeam of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:28: error: cannot find symbol
+            player.setTeam(targetTeam);
+                  ^
+  symbol:   method setTeam(Team)
+  location: variable player of type Player
+30 errors.
+2026.01.29 19:12:47 WARN  javac exited with exit code 1
+2026.01.29 19:12:47 INFO  time: compiled demo in 1.85s
+2026.01.29 19:14:33 INFO  Created report: Optional[file:///C:/Users/Mateusz/Desktop/springboot-footballmanager/src/main/java/com/footballmanager/demo/model/LeagueTable.java]
+2026.01.29 19:14:33 INFO  QDox parse error in file:///C:/Users/Mateusz/Desktop/springboot-footballmanager/src/main/java/com/footballmanager/demo/model/LeagueTable.java (full report at: "C:\Users\Mateusz\Desktop\springboot-footballmanager\.metals\.reports\metals-full\2026-01-29\r_qdox-error_(demo)_19-14-33-723.md")
+2026.01.29 19:14:33 INFO  compiling demo (15 java sources)
+2026.01.29 19:14:35 WARN  Unexpected javac output: WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by com.sourcegraph.shaded.com.google.protobuf.UnsafeUtil$MemoryAccessor (file:/C:/Users/Mateusz/AppData/Local/bloop/cache/semanticdb/com.sourcegraph.semanticdb-javac.0.11.2/semanticdb-javac-0.11.2.jar)
+WARNING: Please consider reporting this to the maintainers of class com.sourcegraph.shaded.com.google.protobuf.UnsafeUtil$MemoryAccessor
+WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\MatchController.java:29: error: cannot find symbol
+        model.addAttribute("homePlayers", home.getPlayers());
+                                              ^
+  symbol:   method getPlayers()
+  location: variable home of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\MatchController.java:30: error: cannot find symbol
+        model.addAttribute("awayPlayers", away.getPlayers());
+                                              ^
+  symbol:   method getPlayers()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:37: error: cannot find symbol
+                        if (result.getType().equals("GOAL")) homeScore++;
+                                  ^
+  symbol:   method getType()
+  location: variable result of type MatchEvent
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:43: error: cannot find symbol
+                        if (result.getType().equals("GOAL")) awayScore++;
+                                  ^
+  symbol:   method getType()
+  location: variable result of type MatchEvent
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:49: error: cannot find symbol
+                Player p = away.getPlayers().get(rand.nextInt(away.getPlayers().size()));
+                               ^
+  symbol:   method getPlayers()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:49: error: cannot find symbol
+                Player p = away.getPlayers().get(rand.nextInt(away.getPlayers().size()));
+                                                                  ^
+  symbol:   method getPlayers()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:50: error: cannot find symbol
+                events.add(new MatchEvent(min, "YELLOW_CARD", "Faul!", away.getName(), p.getLastName()));
+                                                                                        ^
+  symbol:   method getLastName()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:50: error: cannot find symbol
+                events.add(new MatchEvent(min, "YELLOW_CARD", "Faul!", away.getName(), p.getLastName()));
+                                                                           ^
+  symbol:   method getName()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:57: error: cannot find symbol
+        return team.getPlayers().stream()
+                   ^
+  symbol:   method getPlayers()
+  location: variable team of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:64: error: cannot find symbol
+        Player forward = attacker.getPlayers().stream().max(Comparator.comparingInt(Player::getOffensiveStats)).get();
+                                 ^
+  symbol:   method getPlayers()
+  location: variable attacker of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:64: error: invalid method reference
+        Player forward = attacker.getPlayers().stream().max(Comparator.comparingInt(Player::getOffensiveStats)).get();
+                                                                                    ^
+  cannot find symbol
+    symbol:   method getOffensiveStats()
+    location: class Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:65: error: cannot find symbol
+        Player goalie = defender.getPlayers().stream().max(Comparator.comparingInt(Player::getDefensiveStats)).get();
+                                ^
+  symbol:   method getPlayers()
+  location: variable defender of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:65: error: invalid method reference
+        Player goalie = defender.getPlayers().stream().max(Comparator.comparingInt(Player::getDefensiveStats)).get();
+                                                                                   ^
+  cannot find symbol
+    symbol:   method getDefensiveStats()
+    location: class Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:67: error: cannot find symbol
+        double scoringChance = (forward.getOffensiveStats() * 1.2) - (goalie.getDefensiveStats() * 0.8);
+                                       ^
+  symbol:   method getOffensiveStats()
+  location: variable forward of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:67: error: cannot find symbol
+        double scoringChance = (forward.getOffensiveStats() * 1.2) - (goalie.getDefensiveStats() * 0.8);
+                                                                            ^
+  symbol:   method getDefensiveStats()
+  location: variable goalie of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:71: error: cannot find symbol
+            return new MatchEvent(min, "GOAL", "GOOOLLLL!", attacker.getName(), forward.getLastName());
+                                                                                       ^
+  symbol:   method getLastName()
+  location: variable forward of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:71: error: cannot find symbol
+            return new MatchEvent(min, "GOAL", "GOOOLLLL!", attacker.getName(), forward.getLastName());
+                                                                    ^
+  symbol:   method getName()
+  location: variable attacker of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:73: error: cannot find symbol
+            return new MatchEvent(min, "SAVE", "Bramkarz obroni�", defender.getName(), goalie.getLastName());
+                                                                                             ^
+  symbol:   method getLastName()
+  location: variable goalie of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:73: error: cannot find symbol
+            return new MatchEvent(min, "SAVE", "Bramkarz obroni�", defender.getName(), goalie.getLastName());
+                                                                           ^
+  symbol:   method getName()
+  location: variable defender of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:75: error: cannot find symbol
+            return new MatchEvent(min, "MISS", "Niecelny strza�!", attacker.getName(), forward.getLastName());
+                                                                                              ^
+  symbol:   method getLastName()
+  location: variable forward of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:75: error: cannot find symbol
+            return new MatchEvent(min, "MISS", "Niecelny strza�!", attacker.getName(), forward.getLastName());
+                                                                           ^
+  symbol:   method getName()
+  location: variable attacker of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\SquadController.java:27: error: cannot find symbol
+        List<Player> allPlayers = team.getPlayers();
+                                      ^
+  symbol:   method getPlayers()
+  location: variable team of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\SquadController.java:30: error: cannot find symbol
+                .filter(p -> p.isInFirstEleven()) 
+                              ^
+  symbol:   method isInFirstEleven()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\SquadController.java:35: error: cannot find symbol
+                .filter(p -> !p.isInFirstEleven()) 
+                               ^
+  symbol:   method isInFirstEleven()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\TeamService.java:21: error: cannot find symbol
+            p.setInFirstEleven(starterIds.contains(p.getId()));
+                                                    ^
+  symbol:   method getId()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\ViewController.java:26: error: cannot find symbol
+        model.addAttribute("players", team.getPlayers());
+                                          ^
+  symbol:   method getPlayers()
+  location: variable team of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:24: error: cannot find symbol
+        long price = player.getOverall() * 100000;
+                           ^
+  symbol:   method getOverall()
+  location: variable player of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:26: error: cannot find symbol
+        if (targetTeam.getBudget() >= price) {
+                      ^
+  symbol:   method getBudget()
+  location: variable targetTeam of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:27: error: cannot find symbol
+            targetTeam.setBudget(targetTeam.getBudget() - price);
+                                           ^
+  symbol:   method getBudget()
+  location: variable targetTeam of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:28: error: cannot find symbol
+            player.setTeam(targetTeam);
+                  ^
+  symbol:   method setTeam(Team)
+  location: variable player of type Player
+30 errors.
+2026.01.29 19:14:35 WARN  javac exited with exit code 1
+2026.01.29 19:14:35 INFO  time: compiled demo in 1.64s
+sty 29, 2026 7:14:40 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6506
+sty 29, 2026 7:14:40 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6504
+sty 29, 2026 7:14:40 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6512
+sty 29, 2026 7:14:40 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6513
+sty 29, 2026 7:14:49 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6550
+sty 29, 2026 7:14:50 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6556
+sty 29, 2026 7:14:50 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6558
+sty 29, 2026 7:14:50 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6561
+sty 29, 2026 7:14:54 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6578
+sty 29, 2026 7:14:54 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6576
+sty 29, 2026 7:14:54 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6581
+sty 29, 2026 7:14:54 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6579
+sty 29, 2026 7:14:54 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6583
+sty 29, 2026 7:14:56 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6594
+2026.01.29 19:15:21 INFO  compiling demo (15 java sources)
+2026.01.29 19:15:23 WARN  Unexpected javac output: WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by com.sourcegraph.shaded.com.google.protobuf.UnsafeUtil$MemoryAccessor (file:/C:/Users/Mateusz/AppData/Local/bloop/cache/semanticdb/com.sourcegraph.semanticdb-javac.0.11.2/semanticdb-javac-0.11.2.jar)
+WARNING: Please consider reporting this to the maintainers of class com.sourcegraph.shaded.com.google.protobuf.UnsafeUtil$MemoryAccessor
+WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\MatchController.java:29: error: cannot find symbol
+        model.addAttribute("homePlayers", home.getPlayers());
+                                              ^
+  symbol:   method getPlayers()
+  location: variable home of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\MatchController.java:30: error: cannot find symbol
+        model.addAttribute("awayPlayers", away.getPlayers());
+                                              ^
+  symbol:   method getPlayers()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:37: error: cannot find symbol
+                        if (result.getType().equals("GOAL")) homeScore++;
+                                  ^
+  symbol:   method getType()
+  location: variable result of type MatchEvent
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:43: error: cannot find symbol
+                        if (result.getType().equals("GOAL")) awayScore++;
+                                  ^
+  symbol:   method getType()
+  location: variable result of type MatchEvent
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:49: error: cannot find symbol
+                Player p = away.getPlayers().get(rand.nextInt(away.getPlayers().size()));
+                               ^
+  symbol:   method getPlayers()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:49: error: cannot find symbol
+                Player p = away.getPlayers().get(rand.nextInt(away.getPlayers().size()));
+                                                                  ^
+  symbol:   method getPlayers()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:50: error: cannot find symbol
+                events.add(new MatchEvent(min, "YELLOW_CARD", "Faul!", away.getName(), p.getLastName()));
+                                                                                        ^
+  symbol:   method getLastName()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:50: error: cannot find symbol
+                events.add(new MatchEvent(min, "YELLOW_CARD", "Faul!", away.getName(), p.getLastName()));
+                                                                           ^
+  symbol:   method getName()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:57: error: cannot find symbol
+        return team.getPlayers().stream()
+                   ^
+  symbol:   method getPlayers()
+  location: variable team of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:64: error: cannot find symbol
+        Player forward = attacker.getPlayers().stream().max(Comparator.comparingInt(Player::getOffensiveStats)).get();
+                                 ^
+  symbol:   method getPlayers()
+  location: variable attacker of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:64: error: invalid method reference
+        Player forward = attacker.getPlayers().stream().max(Comparator.comparingInt(Player::getOffensiveStats)).get();
+                                                                                    ^
+  cannot find symbol
+    symbol:   method getOffensiveStats()
+    location: class Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:65: error: cannot find symbol
+        Player goalie = defender.getPlayers().stream().max(Comparator.comparingInt(Player::getDefensiveStats)).get();
+                                ^
+  symbol:   method getPlayers()
+  location: variable defender of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:65: error: invalid method reference
+        Player goalie = defender.getPlayers().stream().max(Comparator.comparingInt(Player::getDefensiveStats)).get();
+                                                                                   ^
+  cannot find symbol
+    symbol:   method getDefensiveStats()
+    location: class Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:67: error: cannot find symbol
+        double scoringChance = (forward.getOffensiveStats() * 1.2) - (goalie.getDefensiveStats() * 0.8);
+                                       ^
+  symbol:   method getOffensiveStats()
+  location: variable forward of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:67: error: cannot find symbol
+        double scoringChance = (forward.getOffensiveStats() * 1.2) - (goalie.getDefensiveStats() * 0.8);
+                                                                            ^
+  symbol:   method getDefensiveStats()
+  location: variable goalie of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:71: error: cannot find symbol
+            return new MatchEvent(min, "GOAL", "GOOOLLLL!", attacker.getName(), forward.getLastName());
+                                                                                       ^
+  symbol:   method getLastName()
+  location: variable forward of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:71: error: cannot find symbol
+            return new MatchEvent(min, "GOAL", "GOOOLLLL!", attacker.getName(), forward.getLastName());
+                                                                    ^
+  symbol:   method getName()
+  location: variable attacker of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:73: error: cannot find symbol
+            return new MatchEvent(min, "SAVE", "Bramkarz obroni�", defender.getName(), goalie.getLastName());
+                                                                                             ^
+  symbol:   method getLastName()
+  location: variable goalie of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:73: error: cannot find symbol
+            return new MatchEvent(min, "SAVE", "Bramkarz obroni�", defender.getName(), goalie.getLastName());
+                                                                           ^
+  symbol:   method getName()
+  location: variable defender of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:75: error: cannot find symbol
+            return new MatchEvent(min, "MISS", "Niecelny strza�!", attacker.getName(), forward.getLastName());
+                                                                                              ^
+  symbol:   method getLastName()
+  location: variable forward of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:75: error: cannot find symbol
+            return new MatchEvent(min, "MISS", "Niecelny strza�!", attacker.getName(), forward.getLastName());
+                                                                           ^
+  symbol:   method getName()
+  location: variable attacker of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\SquadController.java:27: error: cannot find symbol
+        List<Player> allPlayers = team.getPlayers();
+                                      ^
+  symbol:   method getPlayers()
+  location: variable team of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\SquadController.java:30: error: cannot find symbol
+                .filter(p -> p.isInFirstEleven()) 
+                              ^
+  symbol:   method isInFirstEleven()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\SquadController.java:35: error: cannot find symbol
+                .filter(p -> !p.isInFirstEleven()) 
+                               ^
+  symbol:   method isInFirstEleven()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\TeamService.java:21: error: cannot find symbol
+            p.setInFirstEleven(starterIds.contains(p.getId()));
+                                                    ^
+  symbol:   method getId()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\ViewController.java:26: error: cannot find symbol
+        model.addAttribute("players", team.getPlayers());
+                                          ^
+  symbol:   method getPlayers()
+  location: variable team of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:24: error: cannot find symbol
+        long price = player.getOverall() * 100000;
+                           ^
+  symbol:   method getOverall()
+  location: variable player of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:26: error: cannot find symbol
+        if (targetTeam.getBudget() >= price) {
+                      ^
+  symbol:   method getBudget()
+  location: variable targetTeam of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:27: error: cannot find symbol
+            targetTeam.setBudget(targetTeam.getBudget() - price);
+                                           ^
+  symbol:   method getBudget()
+  location: variable targetTeam of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:28: error: cannot find symbol
+            player.setTeam(targetTeam);
+                  ^
+  symbol:   method setTeam(Team)
+  location: variable player of type Player
+30 errors.
+2026.01.29 19:15:23 WARN  javac exited with exit code 1
+2026.01.29 19:15:23 INFO  time: compiled demo in 1.25s
+sty 29, 2026 7:15:30 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6858
+sty 29, 2026 7:15:30 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6855
+sty 29, 2026 7:15:30 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6871
+sty 29, 2026 7:15:30 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6869
+sty 29, 2026 7:15:31 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6881
+sty 29, 2026 7:15:43 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6957
+sty 29, 2026 7:15:45 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 6971
+2026.01.29 19:16:05 INFO  QDox parse error in file:///C:/Users/Mateusz/Desktop/springboot-footballmanager/src/main/java/com/footballmanager/demo/model/LeagueTable.java (full report at: "C:\Users\Mateusz\Desktop\springboot-footballmanager\.metals\.reports\metals-full\2026-01-29\r_qdox-error_(demo)_19-14-33-723.md")
+2026.01.29 19:16:05 INFO  compiling demo (15 java sources)
+2026.01.29 19:16:05 WARN  javac exited with exit code 1
+2026.01.29 19:16:05 INFO  time: compiled demo in 0.62s
+sty 29, 2026 7:16:11 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7108
+sty 29, 2026 7:16:11 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7117
+sty 29, 2026 7:16:11 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7119
+sty 29, 2026 7:16:11 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7118
+sty 29, 2026 7:16:14 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7145
+sty 29, 2026 7:16:20 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7189
+sty 29, 2026 7:16:21 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7205
+sty 29, 2026 7:16:21 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7204
+sty 29, 2026 7:16:21 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7212
+sty 29, 2026 7:16:24 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7231
+sty 29, 2026 7:16:24 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7228
+sty 29, 2026 7:16:24 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7235
+sty 29, 2026 7:16:24 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7236
+sty 29, 2026 7:16:28 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7259
+sty 29, 2026 7:16:30 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7278
+sty 29, 2026 7:16:36 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7292
+sty 29, 2026 7:16:37 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7303
+sty 29, 2026 7:16:39 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7323
+sty 29, 2026 7:16:42 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7343
+sty 29, 2026 7:16:42 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7341
+sty 29, 2026 7:16:42 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7346
+sty 29, 2026 7:16:42 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7344
+sty 29, 2026 7:16:42 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7355
+sty 29, 2026 7:16:42 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7358
+sty 29, 2026 7:16:48 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7412
+sty 29, 2026 7:16:48 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7422
+sty 29, 2026 7:16:48 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7425
+sty 29, 2026 7:16:54 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7478
+sty 29, 2026 7:16:57 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7496
+sty 29, 2026 7:16:57 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7493
+sty 29, 2026 7:16:57 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7503
+sty 29, 2026 7:16:59 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7520
+2026.01.29 19:17:07 INFO  compiling demo (15 java sources)
+2026.01.29 19:17:07 INFO  Created report: Optional[file:///C:/Users/Mateusz/Desktop/springboot-footballmanager/src/main/java/com/footballmanager/demo/model/LeagueTable.java]
+2026.01.29 19:17:07 INFO  empty definition using pc, found symbol in pc:  (full report at: "C:\Users\Mateusz\Desktop\springboot-footballmanager\.metals\.reports\metals-full\2026-01-29\r_empty-definition_(demo)_19-17-07-506.md")
+2026.01.29 19:17:08 WARN  javac exited with exit code 1
+2026.01.29 19:17:08 INFO  time: compiled demo in 1.42s
+sty 29, 2026 7:17:14 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7602
+sty 29, 2026 7:17:15 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7615
+sty 29, 2026 7:17:15 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7620
+2026.01.29 19:17:29 INFO  compiling demo (15 java sources)
+2026.01.29 19:17:30 WARN  javac exited with exit code 1
+2026.01.29 19:17:30 INFO  time: compiled demo in 1.56s
+sty 29, 2026 7:20:12 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7770
+2026.01.29 19:20:15 INFO  compiling demo (15 java sources)
+2026.01.29 19:20:16 WARN  javac exited with exit code 1
+2026.01.29 19:20:16 INFO  time: compiled demo in 1.37s
+sty 29, 2026 7:20:17 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7813
+2026.01.29 19:20:35 INFO  compiling demo (15 java sources)
+sty 29, 2026 7:20:36 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7954
+sty 29, 2026 7:20:36 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 7955
+2026.01.29 19:20:37 WARN  Unexpected javac output: WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by com.sourcegraph.shaded.com.google.protobuf.UnsafeUtil$MemoryAccessor (file:/C:/Users/Mateusz/AppData/Local/bloop/cache/semanticdb/com.sourcegraph.semanticdb-javac.0.11.2/semanticdb-javac-0.11.2.jar)
+WARNING: Please consider reporting this to the maintainers of class com.sourcegraph.shaded.com.google.protobuf.UnsafeUtil$MemoryAccessor
+WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\MatchController.java:29: error: cannot find symbol
+        model.addAttribute("homePlayers", home.getPlayers());
+                                              ^
+  symbol:   method getPlayers()
+  location: variable home of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\MatchController.java:30: error: cannot find symbol
+        model.addAttribute("awayPlayers", away.getPlayers());
+                                              ^
+  symbol:   method getPlayers()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:37: error: cannot find symbol
+                        if (result.getType().equals("GOAL")) homeScore++;
+                                  ^
+  symbol:   method getType()
+  location: variable result of type MatchEvent
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:43: error: cannot find symbol
+                        if (result.getType().equals("GOAL")) awayScore++;
+                                  ^
+  symbol:   method getType()
+  location: variable result of type MatchEvent
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:49: error: cannot find symbol
+                Player p = away.getPlayers().get(rand.nextInt(away.getPlayers().size()));
+                               ^
+  symbol:   method getPlayers()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:49: error: cannot find symbol
+                Player p = away.getPlayers().get(rand.nextInt(away.getPlayers().size()));
+                                                                  ^
+  symbol:   method getPlayers()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:50: error: cannot find symbol
+                events.add(new MatchEvent(min, "YELLOW_CARD", "Faul!", away.getName(), p.getLastName()));
+                                                                                        ^
+  symbol:   method getLastName()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:50: error: cannot find symbol
+                events.add(new MatchEvent(min, "YELLOW_CARD", "Faul!", away.getName(), p.getLastName()));
+                                                                           ^
+  symbol:   method getName()
+  location: variable away of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:57: error: cannot find symbol
+        return team.getPlayers().stream()
+                   ^
+  symbol:   method getPlayers()
+  location: variable team of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:64: error: cannot find symbol
+        Player forward = attacker.getPlayers().stream().max(Comparator.comparingInt(Player::getOffensiveStats)).get();
+                                 ^
+  symbol:   method getPlayers()
+  location: variable attacker of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:64: error: invalid method reference
+        Player forward = attacker.getPlayers().stream().max(Comparator.comparingInt(Player::getOffensiveStats)).get();
+                                                                                    ^
+  cannot find symbol
+    symbol:   method getOffensiveStats()
+    location: class Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:65: error: cannot find symbol
+        Player goalie = defender.getPlayers().stream().max(Comparator.comparingInt(Player::getDefensiveStats)).get();
+                                ^
+  symbol:   method getPlayers()
+  location: variable defender of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:65: error: invalid method reference
+        Player goalie = defender.getPlayers().stream().max(Comparator.comparingInt(Player::getDefensiveStats)).get();
+                                                                                   ^
+  cannot find symbol
+    symbol:   method getDefensiveStats()
+    location: class Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:67: error: cannot find symbol
+        double scoringChance = (forward.getOffensiveStats() * 1.2) - (goalie.getDefensiveStats() * 0.8);
+                                       ^
+  symbol:   method getOffensiveStats()
+  location: variable forward of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:67: error: cannot find symbol
+        double scoringChance = (forward.getOffensiveStats() * 1.2) - (goalie.getDefensiveStats() * 0.8);
+                                                                            ^
+  symbol:   method getDefensiveStats()
+  location: variable goalie of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:71: error: cannot find symbol
+            return new MatchEvent(min, "GOAL", "GOOOLLLL!", attacker.getName(), forward.getLastName());
+                                                                                       ^
+  symbol:   method getLastName()
+  location: variable forward of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:71: error: cannot find symbol
+            return new MatchEvent(min, "GOAL", "GOOOLLLL!", attacker.getName(), forward.getLastName());
+                                                                    ^
+  symbol:   method getName()
+  location: variable attacker of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:73: error: cannot find symbol
+            return new MatchEvent(min, "SAVE", "Bramkarz obroni�", defender.getName(), goalie.getLastName());
+                                                                                             ^
+  symbol:   method getLastName()
+  location: variable goalie of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:73: error: cannot find symbol
+            return new MatchEvent(min, "SAVE", "Bramkarz obroni�", defender.getName(), goalie.getLastName());
+                                                                           ^
+  symbol:   method getName()
+  location: variable defender of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:75: error: cannot find symbol
+            return new MatchEvent(min, "MISS", "Niecelny strza�!", attacker.getName(), forward.getLastName());
+                                                                                              ^
+  symbol:   method getLastName()
+  location: variable forward of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\MatchService.java:75: error: cannot find symbol
+            return new MatchEvent(min, "MISS", "Niecelny strza�!", attacker.getName(), forward.getLastName());
+                                                                           ^
+  symbol:   method getName()
+  location: variable attacker of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\SquadController.java:27: error: cannot find symbol
+        List<Player> allPlayers = team.getPlayers();
+                                      ^
+  symbol:   method getPlayers()
+  location: variable team of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\SquadController.java:30: error: cannot find symbol
+                .filter(p -> p.isInFirstEleven()) 
+                              ^
+  symbol:   method isInFirstEleven()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\SquadController.java:35: error: cannot find symbol
+                .filter(p -> !p.isInFirstEleven()) 
+                               ^
+  symbol:   method isInFirstEleven()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\TeamService.java:21: error: cannot find symbol
+            p.setInFirstEleven(starterIds.contains(p.getId()));
+                                                    ^
+  symbol:   method getId()
+  location: variable p of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\controller\ViewController.java:26: error: cannot find symbol
+        model.addAttribute("players", team.getPlayers());
+                                          ^
+  symbol:   method getPlayers()
+  location: variable team of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:24: error: cannot find symbol
+        long price = player.getOverall() * 100000;
+                           ^
+  symbol:   method getOverall()
+  location: variable player of type Player
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:26: error: cannot find symbol
+        if (targetTeam.getBudget() >= price) {
+                      ^
+  symbol:   method getBudget()
+  location: variable targetTeam of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:27: error: cannot find symbol
+            targetTeam.setBudget(targetTeam.getBudget() - price);
+                                           ^
+  symbol:   method getBudget()
+  location: variable targetTeam of type Team
+C:\Users\Mateusz\Desktop\springboot-footballmanager\src\main\java\com\footballmanager\demo\service\CarrerService.java:28: error: cannot find symbol
+            player.setTeam(targetTeam);
+                  ^
+  symbol:   method setTeam(Team)
+  location: variable player of type Player
+30 errors.
+2026.01.29 19:20:37 WARN  javac exited with exit code 1
+2026.01.29 19:20:37 INFO  time: compiled demo in 1.3s
+sty 29, 2026 7:20:53 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 8012
+sty 30, 2026 12:42:11 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 8124
+sty 30, 2026 12:42:11 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 8125
+sty 30, 2026 12:42:11 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 8127

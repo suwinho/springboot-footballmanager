@@ -97,3 +97,12 @@ INSERT INTO players (team_id, first_name, last_name, age, overall, offensive_sta
 INSERT INTO players (team_id, first_name, last_name, age, overall, offensive_stats, defensive_stats, is_in_first_eleven) VALUES (4, 'Mason', 'Mount', 25, 81, 78, 60, false);
 INSERT INTO players (team_id, first_name, last_name, age, overall, offensive_stats, defensive_stats, is_in_first_eleven) VALUES (4, 'Christian', 'Eriksen', 31, 80, 82, 50, false);
 INSERT INTO players (team_id, first_name, last_name, age, overall, offensive_stats, defensive_stats, is_in_first_eleven) VALUES (4, 'Amad', 'Diallo', 21, 74, 76, 25, false);
+
+
+-- =============================================================================
+-- INICJALIZACJA TABELI LIGOWEJ
+-- =============================================================================
+INSERT INTO league_table (team_id, matches_played, wins, draws, losses, goals_scored, goals_conceded, points) VALUES (1, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO league_table (team_id, matches_played, wins, draws, losses, goals_scored, goals_conceded, points) VALUES (2, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO league_table (team_id, matches_played, wins, draws, losses, goals_scored, goals_conceded, points) VALUES (3, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO league_table (team_id, matches_played, wins, draws, losses, goals_scored, goals_conceded, points) VALUES (4, 0, 0, 0, 0, 0, 0, 0);

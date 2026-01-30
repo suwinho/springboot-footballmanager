@@ -3,17 +3,28 @@ package com.footballmanager.demo.service;
 
 import com.footballmanager.demo.model.Player;
 import java.util.Comparator;
+
+import com.footballmanager.demo.model.LeagueTable;
 import com.footballmanager.demo.model.MatchEvent;
 import com.footballmanager.demo.model.Team;
+import com.footballmanager.demo.repository.LeagueRepository;
+
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 @Service
 public class MatchService {
+    
+    private final LeagueRepository leagueRepository;
+
+    public MatchService(LeagueRepository leagueRepository) {
+        this.leagueRepository = leagueRepository;
+    }
 
     public List<MatchEvent> simulateMatch(Team home, Team away) {
         List<MatchEvent> events = new ArrayList<>();
@@ -46,10 +57,15 @@ public class MatchService {
             }
             
             if (rand.nextDouble() < 0.01) {
-                Player p = away.getPlayers().get(rand.nextInt(away.getPlayers().size()));
-                events.add(new MatchEvent(min, "YELLOW_CARD", "Faul!", away.getName(), p.getLastName()));
+                List<Player> starters = away.getPlayers().stream().filter(Player::isInFirstEleven).toList();
+                if (!starters.isEmpty()) {
+                    Player p = starters.get(rand.nextInt(starters.size()));
+                    events.add(new MatchEvent(min, "YELLOW_CARD", "Faul!", away.getName(), p.getLastName()));
+                }
+                
             }
         }
+        updateLeagueTable(home, away, homeScore, awayScore);
         return events;
     }
 
@@ -75,5 +91,36 @@ public class MatchService {
             return new MatchEvent(min, "MISS", "Niecelny strzał!", attacker.getName(), forward.getLastName());
         }
         return null;
+    }
+
+    public void updateLeagueTable(Team home, Team away, int homeGoals, int awayGoals) {
+        LeagueTable homeEntry = leagueRepository.findByTeam(home);
+        LeagueTable awayEntry = leagueRepository.findByTeam(away);
+
+        if (homeEntry == null || awayEntry == null) return;
+
+        homeEntry.setMatchesPlayed(homeEntry.getMatchesPlayed() + 1);
+        awayEntry.setMatchesPlayed(awayEntry.getMatchesPlayed() + 1);
+        homeEntry.setGoalsScored(homeEntry.getGoalsScored() + homeGoals);
+        homeEntry.setGoalsConceded(homeEntry.getGoalsConceded() + awayGoals);
+        awayEntry.setGoalsScored(awayEntry.getGoalsScored() + awayGoals);
+        awayEntry.setGoalsConceded(awayEntry.getGoalsConceded() + homeGoals);
+
+        if (homeGoals > awayGoals) {
+            homeEntry.setWins(homeEntry.getWins() + 1);
+            homeEntry.setPoints(homeEntry.getPoints() + 3);
+            awayEntry.setLosses(awayEntry.getLosses() + 1);
+        } else if (homeGoals < awayGoals) {
+            awayEntry.setWins(awayEntry.getWins() + 1);
+            awayEntry.setPoints(awayEntry.getPoints() + 3);
+            homeEntry.setLosses(homeEntry.getLosses() + 1);
+        } else {
+            homeEntry.setDraws(homeEntry.getDraws() + 1);
+            awayEntry.setDraws(awayEntry.getDraws() + 1);
+            homeEntry.setPoints(homeEntry.getPoints() + 1);
+            awayEntry.setPoints(awayEntry.getPoints() + 1);
+        }
+        leagueRepository.save(homeEntry);
+        leagueRepository.save(awayEntry);
     }
 }
