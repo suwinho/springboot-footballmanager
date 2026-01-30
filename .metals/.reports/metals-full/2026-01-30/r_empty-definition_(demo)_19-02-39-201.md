@@ -1,3 +1,14 @@
+error id: file:///C:/Users/Mateusz/Desktop/springboot-footballmanager/src/main/java/com/footballmanager/demo/service/TeamService.java:com/footballmanager/demo/service/TeamService#max#
+file:///C:/Users/Mateusz/Desktop/springboot-footballmanager/src/main/java/com/footballmanager/demo/service/TeamService.java
+empty definition using pc, found symbol in pc: com/footballmanager/demo/service/TeamService#max#
+semanticdb not found
+empty definition using fallback
+non-local guesses:
+
+offset: 1627
+uri: file:///C:/Users/Mateusz/Desktop/springboot-footballmanager/src/main/java/com/footballmanager/demo/service/TeamService.java
+text:
+```scala
 package com.footballmanager.demo.service;
 
 import com.footballmanager.demo.model.Player;
@@ -43,11 +54,13 @@ public class TeamService {
             .orElse(0.0);
 
         if (defensiveStats > offensiveStats) {
-            Player playerToSub = team.getPlayers().stream().filter(p -> !p.isInFirstEleven()).max(Comparator.comparingInt(Player::getOffensiveStats)).get();
-            playerToSub.setInFirstEleven(true);
-        } else {
-            Player playerToSub = team.getPlayers().stream().filter(p -> !p.isInFirstEleven()).max(Comparator.comparingInt(Player::getDefensiveStats)).get();
-            playerToSub.setInFirstEleven(true);
+            team.getPlayers().stream().filter(p -> !p.isInFirstEleven())..@@max(Comparator.comparingInt(Player::getOffensiveStats)).get();
         }
     }
 }
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: com/footballmanager/demo/service/TeamService#max#
