@@ -28,7 +28,12 @@ public class ViewController {
     }
 
     @GetMapping("/main") 
-    public String getMain() {
+    public String getMain(Model model) {
+        Team team = teamRepository.findById(1L).orElse(null);
+        if (team != null) {
+            model.addAttribute("team", team);
+            model.addAttribute("players", team.getPlayers());
+        }
         return "index";
     }
 

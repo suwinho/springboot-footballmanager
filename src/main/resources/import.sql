@@ -106,3 +106,4 @@ INSERT INTO league_table (team_id, matches_played, wins, draws, losses, goals_sc
 INSERT INTO league_table (team_id, matches_played, wins, draws, losses, goals_scored, goals_conceded, points) VALUES (2, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO league_table (team_id, matches_played, wins, draws, losses, goals_scored, goals_conceded, points) VALUES (3, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO league_table (team_id, matches_played, wins, draws, losses, goals_scored, goals_conceded, points) VALUES (4, 0, 0, 0, 0, 0, 0, 0);
+
