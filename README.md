@@ -33,7 +33,7 @@ A lightweight **Football Manager** simulation game built with **Spring Boot 4**.
    mvn spring-boot:run
    ```
 3. **Explore:**
-   - Main Menu: http://localhost:8080/main
+   - Main Menu: http://localhost:8080
    - Team Dashboard: http://localhost:8080/dashboard/1
    - Match Showcase: http://localhost:8080/match/simulate/1/2
    - H2 Console: http://localhost:8080/h2-console (JDBC URL: jdbc:h2:mem:footballmgr)
