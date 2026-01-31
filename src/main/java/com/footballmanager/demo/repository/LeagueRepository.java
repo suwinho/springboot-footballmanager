@@ -9,6 +9,7 @@ import com.footballmanager.demo.model.Team;
 public interface LeagueRepository extends JpaRepository<LeagueTable, Long> {
     LeagueTable findByTeam(Team team);
 
-    @Query("SELECT l FROM LeagueTable l ORDER BY l.points DESC, (l.goalsScored - l.goalsConceded) DESC")
+    @Query("SELECT lt FROM LeagueTable lt JOIN FETCH lt.team " +
+           "ORDER BY lt.points DESC, (lt.goalsScored - lt.goalsConceded) DESC, lt.goalsScored DESC")
     List<LeagueTable> findAllOrderByPoints();
 }

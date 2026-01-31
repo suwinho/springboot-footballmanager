@@ -35,37 +35,58 @@
   <body class="bg-slate-950 text-slate-100 font-sans min-h-screen">
     <div
       th:each="offer : ${activeOffers}"
-      class="mb-4 bg-slate-900 border-l-4 border-amber-500 p-4 rounded-lg shadow-md"
+      class="mb-4 bg-slate-900 border-l-4 border-amber-500 p-5 rounded-2xl shadow-2xl glass animate-in fade-in slide-in-from-top-4 duration-500"
     >
-      <div class="flex justify-between items-center">
-        <div>
-          <p class="text-amber-500 text-xs font-bold uppercase">
-            Oferta Transferowa
-          </p>
-          <h3 class="text-white font-semibold">
-            <span th:text="${offer.buyer.name}">Klub</span> chce kupić:
-            <span
-              th:text="${offer.player.firstName + ' ' + offer.player.lastName}"
-              class="text-amber-200"
-              >Piłkarz</span
+      <div class="flex justify-between items-center gap-6">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="w-2 h-2 bg-amber-500 rounded-full animate-ping"></span>
+            <p
+              class="text-amber-500 text-[10px] font-black uppercase tracking-widest"
             >
-          </h3>
-          <p class="text-slate-400 text-sm">
-            Kwota:
+              Oferta Transferowa
+            </p>
+          </div>
+          <h3 class="text-white font-bold italic tracking-tight text-lg">
+            <span th:text="${offer.buyer.name}" class="text-blue-400"
+              >Klub</span
+            >
+            <span class="text-slate-400 font-normal">oferuje</span>
             <span
               th:text="${#numbers.formatDecimal(offer.offerPrice, 0, 'WHITESPACE', 0, 'POINT')} + ' €'"
+              class="text-green-400"
               >0 €</span
+            >
+          </h3>
+          <p class="text-slate-400 text-xs font-medium">
+            Za zawodnika:
+            <span
+              th:text="${offer.player.firstName + ' ' + offer.player.lastName}"
+              class="text-white font-bold"
+              >Piłkarz</span
             >
           </p>
         </div>
-        <form th:action="@{/accept-offer/{id}(id=${offer.id})}" method="post">
-          <button
-            type="submit"
-            class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-bold text-xs transition"
-          >
-            AKCEPTUJ
-          </button>
-        </form>
+
+        <div class="flex gap-3">
+          <form th:action="@{/accept-offer/{id}(id=${offer.id})}" method="post">
+            <button
+              type="submit"
+              class="bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-green-900/20"
+            >
+              Akceptuj
+            </button>
+          </form>
+
+          <form th:action="@{/reject-offer/{id}(id=${offer.id})}" method="post">
+            <button
+              type="submit"
+              class="bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase transition-all transform hover:scale-105 active:scale-95 border border-white/5"
+            >
+              Odrzuć
+            </button>
+          </form>
+        </div>
       </div>
     </div>
     <div class="container mx-auto p-6 max-w-7xl">

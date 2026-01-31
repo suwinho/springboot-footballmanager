@@ -117,4 +117,10 @@ public class ViewController {
         carrerService.acceptOffer(id);
         return "redirect:/";
     }    
+
+    @PostMapping("/reject-offer/{id}")
+    public String rejectOffer(@PathVariable Long id) {
+        carrerService.rejectOffer(id);
+        return "redirect:/";
+    }
 }

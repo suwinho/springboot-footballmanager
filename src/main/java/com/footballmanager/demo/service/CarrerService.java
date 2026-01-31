@@ -168,5 +168,11 @@ public class CarrerService {
         teamRepository.save(seller);
         offerRepository.save(offer);
     }
+    @Transactional
+    public void rejectOffer(Long offerId) {
+        TransferOffer offer = offerRepository.findById(offerId).orElseThrow();
+        offer.setActive(false); // Oznaczamy jako nieaktywną
+        offerRepository.save(offer);
+    }
 
 }
