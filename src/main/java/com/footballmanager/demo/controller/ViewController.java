@@ -2,6 +2,7 @@ package com.footballmanager.demo.controller;
 
 import java.time.LocalDate;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -9,15 +10,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
+import org.springframework.data.domain.Sort;
 import com.footballmanager.demo.model.GameState;
 import com.footballmanager.demo.model.LeagueTable;
 import com.footballmanager.demo.model.Match;
 import com.footballmanager.demo.model.Player;
+import com.footballmanager.demo.model.SeasonHistory;
 import com.footballmanager.demo.model.Team;
 import com.footballmanager.demo.repository.GameStateRepository;
 import com.footballmanager.demo.repository.LeagueRepository;
 import com.footballmanager.demo.repository.MatchRepository;
+import com.footballmanager.demo.repository.SeasonHistoryRepository;
 import com.footballmanager.demo.repository.TeamRepository;
 import com.footballmanager.demo.service.MatchService;
 
@@ -35,6 +38,7 @@ public class ViewController {
     private final LeagueRepository leagueRepository;
     private final MatchRepository matchRepository;
     private final MatchService matchService;
+    private final SeasonHistoryRepository seasonHistoryRepository;
 
     @GetMapping("/dashboard/{teamId}")
     public String getDashboard(@PathVariable("teamId") Long teamId, Model model) {
@@ -60,10 +64,14 @@ public class ViewController {
         newState.setCurrentWeek(1);
         return gameStateRepository.save(newState);
         });
+        List<SeasonHistory> topHistory = seasonHistoryRepository.findAll(
+            Sort.by(Sort.Direction.DESC, "year")
+        ).stream().limit(3).toList();
         List<Match> upcomingMatches = matchRepository.findUpcomingMatches(state.getGameDate());
         model.addAttribute("upcomingMatches",upcomingMatches);
         model.addAttribute("leagueTable", table);
         model.addAttribute("gameState", state);
+        model.addAttribute("recentHistory", topHistory);
         return "index";
     }
 
@@ -81,7 +89,7 @@ public class ViewController {
                 match.setHomeGoals(hG);
                 match.setAwayGoals(aG);
                 match.setPlayed(true);
-                matchService.updateLeagueTable(match.getHomeTeam(), match.getAwayTeam(), 0, 0);
+                matchService.updateLeagueTable(match.getHomeTeam(), match.getAwayTeam(), hG, aG);
             }
             match.setHomeGoals(new Random().nextInt(5));
             match.setAwayGoals(new Random().nextInt(5));
