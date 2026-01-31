@@ -33,6 +33,41 @@
     </style>
   </head>
   <body class="bg-slate-950 text-slate-100 font-sans min-h-screen">
+    <div
+      th:each="offer : ${activeOffers}"
+      class="mb-4 bg-slate-900 border-l-4 border-amber-500 p-4 rounded-lg shadow-md"
+    >
+      <div class="flex justify-between items-center">
+        <div>
+          <p class="text-amber-500 text-xs font-bold uppercase">
+            Oferta Transferowa
+          </p>
+          <h3 class="text-white font-semibold">
+            <span th:text="${offer.buyer.name}">Klub</span> chce kupić:
+            <span
+              th:text="${offer.player.firstName + ' ' + offer.player.lastName}"
+              class="text-amber-200"
+              >Piłkarz</span
+            >
+          </h3>
+          <p class="text-slate-400 text-sm">
+            Kwota:
+            <span
+              th:text="${#numbers.formatDecimal(offer.offerPrice, 0, 'WHITESPACE', 0, 'POINT')} + ' €'"
+              >0 €</span
+            >
+          </p>
+        </div>
+        <form th:action="@{/accept-offer/{id}(id=${offer.id})}" method="post">
+          <button
+            type="submit"
+            class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-bold text-xs transition"
+          >
+            AKCEPTUJ
+          </button>
+        </form>
+      </div>
+    </div>
     <div class="container mx-auto p-6 max-w-7xl">
       <nav
         class="flex justify-between items-center mb-8 px-4 glass py-4 rounded-2xl"

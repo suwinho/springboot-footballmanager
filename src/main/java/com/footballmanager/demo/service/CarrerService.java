@@ -4,10 +4,13 @@ import org.springframework.stereotype.Service;
 import com.footballmanager.demo.repository.PlayerRepository;
 import com.footballmanager.demo.repository.SeasonHistoryRepository;
 import com.footballmanager.demo.repository.TeamRepository;
+import com.footballmanager.demo.repository.TransferOfferRepository;
 
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import com.footballmanager.demo.repository.GameStateRepository;
@@ -19,6 +22,8 @@ import com.footballmanager.demo.model.Match;
 import com.footballmanager.demo.model.Player;
 import com.footballmanager.demo.model.SeasonHistory;
 import com.footballmanager.demo.model.Team;
+import com.footballmanager.demo.model.TransferOffer;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -32,6 +37,8 @@ public class CarrerService {
     private final GameStateRepository gameStateRepository;
     private final LeagueRepository leagueRepository;
     private final SeasonHistoryRepository seasonHistoryRepository;
+    private final TransferOfferRepository offerRepository;
+    private final TeamService teamService;
 
     @Transactional 
     public String transferPlayer(Long playerID, Long targetTeamID) {
@@ -119,6 +126,47 @@ public class CarrerService {
             history.setWinnerPoints(topTeams.get(0).getPoints());    
             seasonHistoryRepository.save(history);
         }
+    }
+
+    @Transactional
+    public void generateIncomingOffer() {
+        Random rand = new Random();
+        if (rand.nextDouble() > 0.10) return;
+
+        Team myTeam = teamRepository.findById(1L).orElseThrow();
+        List<Team> otherTeams = teamRepository.findAll().stream().filter(t -> !t.getId().equals(1L)).toList();
+
+        if (otherTeams.isEmpty() || myTeam.getPlayers().isEmpty()) return;
+
+        Team buyer = otherTeams.get(rand.nextInt(otherTeams.size()));
+        Player playerToBuy = myTeam.getPlayers().get(rand.nextInt(myTeam.getPlayers().size()));
+        if (myTeam.getPlayers().size() <= 11) return;
+        long offerPrice = (long) (playerToBuy.getMarketValue() * (0.9 + (1.2 - 0.9) * rand.nextDouble()));
+        TransferOffer offer = new TransferOffer();
+        offer.setPlayer(playerToBuy);
+        offer.setBuyer(buyer);
+        offer.setOfferPrice(offerPrice);
+        offerRepository.save(offer);
+    }
+
+    @Transactional
+    public void acceptOffer(Long offerId) {
+        TransferOffer offer = offerRepository.findById(offerId).orElseThrow();
+        if (!offer.isActive()) return;
+        Player player = offer.getPlayer();
+        Team seller = player.getTeam();
+        Team buyer = offer.getBuyer();
+
+        buyer.setBudget(buyer.getBudget() - offer.getOfferPrice());
+        seller.setBudget(seller.getBudget() + offer.getOfferPrice());
+        player.setTeam(buyer);
+
+        offer.setActive(false); 
+        teamService.makeSquadComplete(buyer.getId());
+        playerRepository.save(player);
+        teamRepository.save(buyer);
+        teamRepository.save(seller);
+        offerRepository.save(offer);
     }
 
 }

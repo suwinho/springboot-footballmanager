@@ -17,11 +17,14 @@ import com.footballmanager.demo.model.Match;
 import com.footballmanager.demo.model.Player;
 import com.footballmanager.demo.model.SeasonHistory;
 import com.footballmanager.demo.model.Team;
+import com.footballmanager.demo.model.TransferOffer;
 import com.footballmanager.demo.repository.GameStateRepository;
 import com.footballmanager.demo.repository.LeagueRepository;
 import com.footballmanager.demo.repository.MatchRepository;
 import com.footballmanager.demo.repository.SeasonHistoryRepository;
 import com.footballmanager.demo.repository.TeamRepository;
+import com.footballmanager.demo.repository.TransferOfferRepository;
+import com.footballmanager.demo.service.CarrerService;
 import com.footballmanager.demo.service.MatchService;
 
 import java.util.List;
@@ -39,6 +42,8 @@ public class ViewController {
     private final MatchRepository matchRepository;
     private final MatchService matchService;
     private final SeasonHistoryRepository seasonHistoryRepository;
+    private final CarrerService carrerService;
+    private final TransferOfferRepository offerRepository;
 
     @GetMapping("/dashboard/{teamId}")
     public String getDashboard(@PathVariable("teamId") Long teamId, Model model) {
@@ -68,10 +73,14 @@ public class ViewController {
             Sort.by(Sort.Direction.DESC, "year")
         ).stream().limit(3).toList();
         List<Match> upcomingMatches = matchRepository.findUpcomingMatches(state.getGameDate());
+        List<TransferOffer> activeOffers = offerRepository.findAll().stream()
+            .filter(o -> o.isActive() && o.getPlayer().getTeam().getId() == 1L)
+            .toList();
         model.addAttribute("upcomingMatches",upcomingMatches);
         model.addAttribute("leagueTable", table);
         model.addAttribute("gameState", state);
         model.addAttribute("recentHistory", topHistory);
+        model.addAttribute("activeOffers", activeOffers);
         return "index";
     }
 
@@ -96,10 +105,16 @@ public class ViewController {
             match.setPlayed(true);
             matchRepository.save(match);
         }
+        
         state.setGameDate(state.getGameDate().plusDays(1));
+        carrerService.generateIncomingOffer();
         gameStateRepository.save(state);
         return "redirect:/";
     }
 
-    
+    @PostMapping("/accept-offer/{id}")
+    public String acceptOffer(@PathVariable Long id) {
+        carrerService.acceptOffer(id);
+        return "redirect:/";
+    }    
 }
