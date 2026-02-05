@@ -1,3 +1,14 @@
+error id: file:///C:/Users/mateu/Desktop/springboot-footballmanager/src/main/java/com/footballmanager/demo/service/CarrerService.java:_empty_/Skoro#
+file:///C:/Users/mateu/Desktop/springboot-footballmanager/src/main/java/com/footballmanager/demo/service/CarrerService.java
+empty definition using pc, found symbol in pc: _empty_/Skoro#
+semanticdb not found
+empty definition using fallback
+non-local guesses:
+
+offset: 9792
+uri: file:///C:/Users/mateu/Desktop/springboot-footballmanager/src/main/java/com/footballmanager/demo/service/CarrerService.java
+text:
+```scala
 package com.footballmanager.demo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,7 +90,7 @@ public class CarrerService {
         if (gameState.getGameDate().getDayOfWeek().getValue() == 7) {
             developPlayers();
         }
-        simulateAITransfers();
+
         playerRepository.saveAllAndFlush(allPlayers);
         gameState.setGameDate(gameState.getGameDate().plusDays(1));
         gameStateRepository.save(gameState);
@@ -231,37 +242,57 @@ public class CarrerService {
         playerRepository.saveAll(allPlayers);
     }
 
-    @Transactional
-    public void simulateAITransfers() {
-        Random rand = new Random();
-        if (rand.nextDouble() > 0.2) return;
-        List<Team> aiTeams = teamRepository.findAll().stream()
-                .filter(t -> !t.getId().equals(1L))
-                .toList();
+    Sk@@oro Twoja liga liczy 20 zespołów i ponad 300 zawodników, czas sprawić, by AI zaczęło handlować między sobą. To stworzy dynamiczny świat, w którym inne kluby również będą się wzmacniać lub osłabiać bez Twojego udziału.
 
-        if (aiTeams.size() < 2) return;
-        Team buyer = aiTeams.get(rand.nextInt(aiTeams.size()));
-        Team seller = aiTeams.get(rand.nextInt(aiTeams.size()));
-        if (buyer.equals(seller)) return;
-        List<Player> availablePlayers = seller.getPlayers().stream()
-                .filter(p -> !p.isInFirstEleven())
-                .toList();
+Oto kompletna implementacja systemu transferów AI-to-AI.
 
-        if (availablePlayers.isEmpty()) return;
-        Player player = availablePlayers.get(rand.nextInt(availablePlayers.size()));
-        long price = player.getMarketValue();
-        if (buyer.getBudget() >= price && seller.getPlayers().size() > 14) {
-            buyer.setBudget(buyer.getBudget() - price);
-            seller.setBudget(seller.getBudget() + price);
-            player.setTeam(buyer);
+1. Rozbudowa CarrerService.java
+Dodamy metodę simulateAITransfers(), która będzie losować chętnego kupca, sprzedawcę oraz zawodnika, a następnie przeprowadzi transakcję, jeśli budżet na to pozwoli.
 
-            playerRepository.save(player);
-            teamRepository.save(buyer);
-            teamRepository.save(seller);
-            addNews("BREAKING: " + buyer.getName() + " kupuje " + player.getLastName() + 
-                    " od " + seller.getName() + " za " + 
-                    price + " €!", "TRANSFER");
+Java
+@Transactional
+public void simulateAITransfers() {
+    Random rand = new Random();
+    if (rand.nextDouble() > 0.05) return;
+
+    List<Team> aiTeams = teamRepository.findAll().stream()
+            .filter(t -> !t.getId().equals(1L))
+            .toList();
+
+    if (aiTeams.size() < 2) return;
+
+    Team buyer = aiTeams.get(rand.nextInt(aiTeams.size()));
+    Team seller = aiTeams.get(rand.nextInt(aiTeams.size()));
+    if (buyer.equals(seller)) return;
+
+    List<Player> availablePlayers = seller.getPlayers().stream()
+            .filter(p -> !p.isInFirstEleven())
+            .toList();
+
+    if (availablePlayers.isEmpty()) return;
+    Player player = availablePlayers.get(rand.nextInt(availablePlayers.size()));
+    long price = player.getMarketValue();
+    if (buyer.getBudget() >= price && seller.getPlayers().size() > 14) {
+        buyer.setBudget(buyer.getBudget() - price);
+        seller.setBudget(seller.getBudget() + price);
+        player.setTeam(buyer);
+
+        playerRepository.save(player);
+        teamRepository.save(buyer);
+        teamRepository.save(seller);
+
+        // Dodajemy newsa do gazety!
+        addNews("BREAKING: " + buyer.getName() + " kupuje " + player.getLastName() + 
+                " od " + seller.getName() + " za " + 
+                String.format("%, d", price).replace(',', ' ') + " €!", "TRANSFER");
     }
 }
 
 }
+
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: _empty_/Skoro#
