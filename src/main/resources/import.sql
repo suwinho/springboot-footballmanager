@@ -248,3 +248,4 @@ UPDATE players SET market_value = (overall * 1000000) + ((potential - overall) *
 
 INSERT INTO game_state (id, game_date, current_week) VALUES (1, '2026-07-30', 1);
 UPDATE players SET stamina = 100;
+UPDATE players SET injury_days = 0 WHERE injury_days IS NULL;

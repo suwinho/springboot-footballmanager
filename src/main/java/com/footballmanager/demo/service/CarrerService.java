@@ -80,6 +80,7 @@ public class CarrerService {
             developPlayers();
         }
         simulateAITransfers();
+        handleInjuries();
         playerRepository.saveAllAndFlush(allPlayers);
         gameState.setGameDate(gameState.getGameDate().plusDays(1));
         gameStateRepository.save(gameState);
@@ -261,7 +262,36 @@ public class CarrerService {
             addNews("BREAKING: " + buyer.getName() + " kupuje " + player.getLastName() + 
                     " od " + seller.getName() + " za " + 
                     price + " €!", "TRANSFER");
+        }
     }
-}
+
+    @Transactional
+    public void handleInjuries() {
+        List<Player> allPlayers = playerRepository.findAll();
+        Random rand = new Random();
+
+        for (Player p : allPlayers) {
+            if (p.getInjuryDays() > 0) {
+                p.setInjuryDays(p.getInjuryDays() - 1);
+                if (p.getInjuryDays() == 0 && p.getTeam().getId() == 1L) {
+                    addNews("MEDYK: " + p.getLastName() + " wrócił do treningów po kontuzji.", "INFO");
+                }
+                continue;
+            }
+            double injuryChance = 0.002;
+            if (p.getStamina() < 70) injuryChance = 0.01;
+            if (p.getStamina() < 40) injuryChance = 0.05;
+            if (rand.nextDouble() < injuryChance) {
+                int duration = rand.nextInt(14) + 3; 
+                p.setInjuryDays(duration);
+                p.setStamina(Math.max(0, p.getStamina() - 20));
+
+                if (p.getTeam().getId() == 1L) {
+                    addNews("KONTUZJA: " + p.getLastName() + " wypada z gry na " + duration + " dni!", "WARNING");
+                }
+            }
+        }
+        playerRepository.saveAll(allPlayers);
+    }
 
 }

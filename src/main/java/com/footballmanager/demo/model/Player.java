@@ -32,4 +32,9 @@ public class Player {
     @ManyToOne
     @JoinColumn(name = "team_id")
     private Team team;
+    @Column(name = "injury_days", nullable = true)
+    private int injuryDays = 0;
+    public boolean isInjured() {
+        return injuryDays > 0;
+    }
 }
