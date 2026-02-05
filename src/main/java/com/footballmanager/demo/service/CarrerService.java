@@ -67,9 +67,13 @@ public class CarrerService {
         GameState gameState = gameStateRepository.findById(1L).get();
         List<Player> allPlayers = playerRepository.findAll();
         for (Player p : allPlayers) {
-            int recovery = p.isInFirstEleven() ? 5 : 12; 
-            p.setStamina(Math.min(100, p.getStamina() + recovery));
+            if (p.getStamina() < 100) {
+                int recovery = p.isInFirstEleven() ? 5 : 12; 
+                int newStamina = Math.min(100, p.getStamina() + recovery);
+                p.setStamina(newStamina);
+            }
         }
+        playerRepository.saveAllAndFlush(allPlayers);
         gameState.setGameDate(gameState.getGameDate().plusDays(1));
         gameStateRepository.save(gameState);
     }

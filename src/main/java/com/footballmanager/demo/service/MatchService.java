@@ -75,15 +75,23 @@ public class MatchService {
     private double calculateFormationsStrength(Team team, boolean offensive) {
         return team.getPlayers().stream()
             .filter(p -> p.isInFirstEleven()) 
-            .mapToDouble(p -> offensive ? p.getOffensiveStats() : p.getDefensiveStats())
+            .mapToDouble(p -> {
+            double baseStat = offensive ? p.getOffensiveStats() : p.getDefensiveStats();
+            double staminaMultiplier = (p.getStamina() + 100) / 200.0;
+            return baseStat * staminaMultiplier;
+        })
             .average()
             .orElse(0.0);
     }
     private MatchEvent resolveAction(Team attacker, Team defender, int min, Random rand) {
         Player forward = attacker.getPlayers().stream().max(Comparator.comparingInt(Player::getOffensiveStats)).get();
         Player goalie = defender.getPlayers().stream().max(Comparator.comparingInt(Player::getDefensiveStats)).get();
+        double forwardStaminaFactor = (forward.getStamina() + 50) / 150.0; 
+        double goalieStaminaFactor = (goalie.getStamina() + 50) / 150.0;
+        double effectiveAttack = forward.getOffensiveStats() * 1.2 * forwardStaminaFactor;
+        double effectiveDefense = goalie.getDefensiveStats() * 0.8 * goalieStaminaFactor;
 
-        double scoringChance = (forward.getOffensiveStats() * 1.2) - (goalie.getDefensiveStats() * 0.8);
+        double scoringChance = effectiveAttack - effectiveDefense;
         double roll = rand.nextDouble() * 100;
 
         if (roll < scoringChance * 0.3) {

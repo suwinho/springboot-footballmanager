@@ -106,7 +106,7 @@ public class ViewController {
             matchRepository.save(match);
         }
         
-        state.setGameDate(state.getGameDate().plusDays(1));
+        carrerService.advanceDay();
         carrerService.generateIncomingOffer();
         gameStateRepository.save(state);
         return "redirect:/";
