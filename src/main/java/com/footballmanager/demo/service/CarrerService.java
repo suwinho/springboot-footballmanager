@@ -65,6 +65,11 @@ public class CarrerService {
     @Transactional
     public void advanceDay() {
         GameState gameState = gameStateRepository.findById(1L).get();
+        List<Player> allPlayers = playerRepository.findAll();
+        for (Player p : allPlayers) {
+            int recovery = p.isInFirstEleven() ? 5 : 12; 
+            p.setStamina(Math.min(100, p.getStamina() + recovery));
+        }
         gameState.setGameDate(gameState.getGameDate().plusDays(1));
         gameStateRepository.save(gameState);
     }
@@ -171,7 +176,7 @@ public class CarrerService {
     @Transactional
     public void rejectOffer(Long offerId) {
         TransferOffer offer = offerRepository.findById(offerId).orElseThrow();
-        offer.setActive(false); // Oznaczamy jako nieaktywną
+        offer.setActive(false); 
         offerRepository.save(offer);
     }
 

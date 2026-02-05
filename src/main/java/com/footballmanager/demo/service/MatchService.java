@@ -8,6 +8,9 @@ import com.footballmanager.demo.model.LeagueTable;
 import com.footballmanager.demo.model.MatchEvent;
 import com.footballmanager.demo.model.Team;
 import com.footballmanager.demo.repository.LeagueRepository;
+import com.footballmanager.demo.repository.PlayerRepository;
+
+import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -18,13 +21,11 @@ import org.springframework.stereotype.Service;
 
 
 @Service
+@RequiredArgsConstructor
 public class MatchService {
     
     private final LeagueRepository leagueRepository;
-
-    public MatchService(LeagueRepository leagueRepository) {
-        this.leagueRepository = leagueRepository;
-    }
+    private final PlayerRepository playerRepository;
 
     public List<MatchEvent> simulateMatch(Team home, Team away) {
         List<MatchEvent> events = new ArrayList<>();
@@ -65,6 +66,8 @@ public class MatchService {
                 
             }
         }
+        decreaseStamina(home.getPlayers());
+        decreaseStamina(away.getPlayers());
         updateLeagueTable(home, away, homeScore, awayScore);
         return events;
     }
@@ -122,5 +125,15 @@ public class MatchService {
         }
         leagueRepository.save(homeEntry);
         leagueRepository.save(awayEntry);
+    }
+
+    private void decreaseStamina(List<Player> players) {
+        for (Player p : players) {
+            if (p.isInFirstEleven()) {
+                int fatigue = new Random().nextInt(11) + 10;
+                p.setStamina(Math.max(0, p.getStamina() - fatigue));
+                playerRepository.save(p);
+            }
+        }
     }
 }

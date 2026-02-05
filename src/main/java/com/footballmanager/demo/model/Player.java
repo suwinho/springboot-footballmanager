@@ -24,6 +24,8 @@ public class Player {
     private boolean isInFirstEleven;
     @Column(nullable = false, columnDefinition = "int default 0")
     private int marketValue = 0;
+    @Column(name = "stamina")
+    private int stamina = 100;
 
     @ManyToOne
     @JoinColumn(name = "team_id")

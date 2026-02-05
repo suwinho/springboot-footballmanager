@@ -255,3 +255,4 @@ INSERT INTO league_table (team_id, matches_played, wins, draws, losses, goals_sc
 UPDATE players SET market_value = (overall * 1000000) - (age * 500000);
 
 INSERT INTO game_state (id, game_date, current_week) VALUES (1, '2026-07-30', 1);
+UPDATE players SET stamina = 100;
