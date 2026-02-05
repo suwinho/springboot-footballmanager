@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.footballmanager.demo.repository.GameStateRepository;
 import com.footballmanager.demo.repository.LeagueRepository;
 import com.footballmanager.demo.repository.MatchRepository;
+import com.footballmanager.demo.repository.NewsRepository;
 import com.footballmanager.demo.model.GameState;
 import com.footballmanager.demo.model.LeagueTable;
 import com.footballmanager.demo.model.Match;
@@ -23,6 +24,7 @@ import com.footballmanager.demo.model.Player;
 import com.footballmanager.demo.model.SeasonHistory;
 import com.footballmanager.demo.model.Team;
 import com.footballmanager.demo.model.TransferOffer;
+import com.footballmanager.demo.model.News;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,6 +41,7 @@ public class CarrerService {
     private final SeasonHistoryRepository seasonHistoryRepository;
     private final TransferOfferRepository offerRepository;
     private final TeamService teamService;
+    private final NewsRepository newsRepository;
 
     @Transactional 
     public String transferPlayer(Long playerID, Long targetTeamID) {
@@ -173,7 +176,7 @@ public class CarrerService {
         buyer.setBudget(buyer.getBudget() - offer.getOfferPrice());
         seller.setBudget(seller.getBudget() + offer.getOfferPrice());
         player.setTeam(buyer);
-
+        addNews("TRANSFER: " + player.getLastName() + " przenosi się do " + buyer.getName() + "!", "TRANSFER");
         offer.setActive(false); 
         teamService.makeSquadComplete(buyer.getId());
         playerRepository.save(player);
@@ -189,15 +192,30 @@ public class CarrerService {
     }
 
     @Transactional
+    public void addNews(String content, String type) {
+        GameState state = gameStateRepository.findById(1L).get();
+        newsRepository.save(News.builder()
+            .content(content)
+            .type(type)
+            .date(state.getGameDate())
+            .build());
+    }
+
+    @Transactional
     public void developPlayers() {
         List<Player> allPlayers = playerRepository.findAll();
         Random rand = new Random();
 
         for (Player p : allPlayers) {
             if (p.getOverall() < p.getPotential()) {           
-                double growthChance = (35 - p.getAge()) * 0.05;            
-                if (rand.nextDouble() < growthChance) {
+                double baseGrowthChance = (38 - p.getAge()) * 0.006; 
+                double difficultyMultiplier = (100.0 - p.getOverall()) / 100.0;
+                double finalChance = baseGrowthChance * difficultyMultiplier;            
+                if (rand.nextDouble() < finalChance) {
                     p.setOverall(p.getOverall() + 1);
+                    if (p.getTeam().getId() == 1L) {
+                        addNews("TRENING: " + p.getLastName() + " wygląda świetnie na treningach! (+1 OVR)", "TRAINING");
+                    }
                     if (p.getOffensiveStats() > p.getDefensiveStats()) {
                         p.setOffensiveStats(p.getOffensiveStats() + 1);
                     } else {

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import com.footballmanager.demo.model.GameState;
 import com.footballmanager.demo.model.LeagueTable;
 import com.footballmanager.demo.model.Match;
+import com.footballmanager.demo.model.News;
 import com.footballmanager.demo.model.Player;
 import com.footballmanager.demo.model.SeasonHistory;
 import com.footballmanager.demo.model.Team;
@@ -21,6 +22,7 @@ import com.footballmanager.demo.model.TransferOffer;
 import com.footballmanager.demo.repository.GameStateRepository;
 import com.footballmanager.demo.repository.LeagueRepository;
 import com.footballmanager.demo.repository.MatchRepository;
+import com.footballmanager.demo.repository.NewsRepository;
 import com.footballmanager.demo.repository.SeasonHistoryRepository;
 import com.footballmanager.demo.repository.TeamRepository;
 import com.footballmanager.demo.repository.TransferOfferRepository;
@@ -44,6 +46,7 @@ public class ViewController {
     private final SeasonHistoryRepository seasonHistoryRepository;
     private final CarrerService carrerService;
     private final TransferOfferRepository offerRepository;
+    private final NewsRepository newsRepository;
 
     @GetMapping("/dashboard/{teamId}")
     public String getDashboard(@PathVariable("teamId") Long teamId, Model model) {
@@ -76,6 +79,8 @@ public class ViewController {
         List<TransferOffer> activeOffers = offerRepository.findAll().stream()
             .filter(o -> o.isActive() && o.getPlayer().getTeam().getId() == 1L)
             .toList();
+        List<News> newsFeed = newsRepository.findTop10ByOrderByDateDescIdDesc();
+        model.addAttribute("newsFeed", newsFeed);
         model.addAttribute("upcomingMatches",upcomingMatches);
         model.addAttribute("leagueTable", table);
         model.addAttribute("gameState", state);
