@@ -73,6 +73,10 @@ public class CarrerService {
                 p.setStamina(newStamina);
             }
         }
+        if (gameState.getGameDate().getDayOfWeek().getValue() == 7) {
+            developPlayers();
+        }
+
         playerRepository.saveAllAndFlush(allPlayers);
         gameState.setGameDate(gameState.getGameDate().plusDays(1));
         gameStateRepository.save(gameState);
@@ -182,6 +186,31 @@ public class CarrerService {
         TransferOffer offer = offerRepository.findById(offerId).orElseThrow();
         offer.setActive(false); 
         offerRepository.save(offer);
+    }
+
+    @Transactional
+    public void developPlayers() {
+        List<Player> allPlayers = playerRepository.findAll();
+        Random rand = new Random();
+
+        for (Player p : allPlayers) {
+            if (p.getOverall() < p.getPotential()) {           
+                double growthChance = (35 - p.getAge()) * 0.05;            
+                if (rand.nextDouble() < growthChance) {
+                    p.setOverall(p.getOverall() + 1);
+                    if (p.getOffensiveStats() > p.getDefensiveStats()) {
+                        p.setOffensiveStats(p.getOffensiveStats() + 1);
+                    } else {
+                        p.setDefensiveStats(p.getDefensiveStats() + 1);
+                    }                
+                    p.setMarketValue(p.getMarketValue() + 2000000);
+                }
+            } else if (p.getAge() > 33 && rand.nextDouble() < 0.1) {
+                p.setOverall(Math.max(40, p.getOverall() - 1));
+                p.setMarketValue(Math.max(100000, p.getMarketValue() - 1000000));
+            }
+        }
+        playerRepository.saveAll(allPlayers);
     }
 
 }

@@ -26,6 +26,8 @@ public class Player {
     private int marketValue = 0;
     @Column(name = "stamina")
     private int stamina = 100;
+    @Column(name = "potential")
+    private int potential;
 
     @ManyToOne
     @JoinColumn(name = "team_id")
