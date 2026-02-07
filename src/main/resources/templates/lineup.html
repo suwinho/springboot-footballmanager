@@ -91,7 +91,9 @@
               th:each="p : ${starters}"
               th:id="'p-' + ${p.id}"
               th:data-id="${p.id}"
+              th:data-injured="${p.injuryDays > 0}"
               class="player-card bg-slate-800 p-4 mb-3 rounded-2xl flex justify-between items-center border border-slate-700 shadow-xl"
+              th:classappend="${p.injuryDays > 0 ? 'opacity-50 grayscale border-red-900/50' : ''}"
               draggable="true"
               ondragstart="drag(event)"
             >
@@ -101,23 +103,36 @@
                   th:text="${p.overall}"
                 ></div>
                 <div>
+                  <p class="player-name font-bold leading-none text-white">
+                    <span th:text="${p.lastName}"></span>
+                    <span
+                      th:if="${p.injuryDays > 0}"
+                      class="ml-2 text-red-500 text-[10px] animate-pulse"
+                      >🚑</span
+                    >
+                  </p>
+
                   <p
-                    class="player-name font-bold leading-none text-white"
-                    th:text="${p.lastName}"
-                  ></p>
-                  <p
+                    th:if="${p.injuryDays == 0}"
                     class="text-[10px] text-slate-500 uppercase mt-1"
                     th:text="'Atk: ' + ${p.offensiveStats} + ' Def: ' + ${p.defensiveStats}"
                   ></p>
+                  <p
+                    th:if="${p.injuryDays > 0}"
+                    class="text-[10px] text-red-400 font-bold uppercase mt-1"
+                    th:text="'Powrót za: ' + ${p.injuryDays} + ' dni'"
+                  ></p>
                 </div>
-                <div class="flex flex-col items-end gap-1 ml-4 min-w-[60px]">
+
+                <div
+                  th:if="${p.injuryDays == 0}"
+                  class="flex flex-col items-end gap-1 ml-4 min-w-[60px]"
+                >
                   <span
                     class="text-[9px] font-mono font-bold"
                     th:text="${p.stamina + '%'}"
                     th:classappend="${p.stamina > 70 ? 'text-green-400' : (p.stamina > 30 ? 'text-yellow-500' : 'text-red-500')}"
-                  >
-                    100%
-                  </span>
+                  ></span>
                   <div
                     class="w-full bg-slate-950 h-1 rounded-full overflow-hidden border border-white/5"
                   >
@@ -129,7 +144,12 @@
                   </div>
                 </div>
               </div>
-              <div class="badge text-green-500 font-black uppercase">XI</div>
+              <div
+                class="badge text-green-500 font-black uppercase"
+                th:text="${p.injuryDays > 0 ? 'OUT' : 'XI'}"
+              >
+                XI
+              </div>
             </div>
           </div>
         </section>
@@ -195,108 +215,6 @@
       </div>
     </div>
 
-    <script>
-      function validateLineup() {
-        const starters = document.querySelectorAll(
-          "#starters-zone .player-card",
-        );
-        const count = starters.length;
-        const saveButton = document.getElementById("saveButton");
-        const counterText = document.getElementById("playerCount");
-
-        if (count === 11) {
-          saveButton.disabled = false;
-          counterText.innerText = "SKŁAD KOMPLETNY (11/11)";
-          counterText.className =
-            "text-right text-xs mt-3 font-bold text-green-400 uppercase tracking-widest";
-        } else {
-          saveButton.disabled = true;
-          const diff = 11 - count;
-          if (count < 11) {
-            counterText.innerText = `DOŁÓŻ JESZCZE ${diff} ZAWODNIKÓW`;
-          } else {
-            counterText.innerText = `ZA DUŻO O ${count - 11} ZAWODNIKÓW`;
-          }
-          counterText.className =
-            "text-right text-xs mt-3 font-bold text-red-500 uppercase tracking-widest animate-pulse";
-        }
-      }
-
-      function allowDrop(ev) {
-        ev.preventDefault();
-        ev.currentTarget.classList.add("drag-over");
-      }
-
-      function removeHighlight(ev) {
-        ev.currentTarget.classList.remove("drag-over");
-      }
-
-      function drag(ev) {
-        ev.dataTransfer.setData("text/plain", ev.target.id);
-        ev.target.classList.add("dragging");
-      }
-
-      function drop(ev) {
-        ev.preventDefault();
-        const zone = ev.currentTarget;
-        zone.classList.remove("drag-over");
-
-        const playerCardId = ev.dataTransfer.getData("text/plain");
-        const playerCard = document.getElementById(playerCardId);
-        playerCard.classList.remove("dragging");
-
-        zone.appendChild(playerCard);
-        updateCardUI(playerCard, zone.id);
-        validateLineup();
-      }
-
-      function updateCardUI(card, zoneId) {
-        const isStarter = zoneId === "starters-zone";
-        const badge = card.querySelector(".badge");
-        const ovrCircle = card.querySelector(".ovr-circle");
-        const nameText = card.querySelector(".player-name");
-
-        if (isStarter) {
-          card.classList.remove("bg-slate-900", "opacity-70");
-          card.classList.add(
-            "bg-slate-800",
-            "opacity-100",
-            "shadow-xl",
-            "border-slate-700",
-          );
-          badge.innerText = "XI";
-          badge.className = "badge text-green-500 font-black uppercase";
-          ovrCircle.className =
-            "ovr-circle w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-black text-sm text-white";
-          nameText.className = "player-name font-bold leading-none text-white";
-        } else {
-          card.classList.remove(
-            "bg-slate-800",
-            "opacity-100",
-            "shadow-xl",
-            "border-slate-700",
-          );
-          card.classList.add("bg-slate-900", "opacity-70");
-          badge.innerText = "SUB";
-          badge.className = "badge text-slate-700 font-black uppercase";
-          ovrCircle.className =
-            "ovr-circle w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center font-black text-sm text-slate-400";
-          nameText.className =
-            "player-name font-bold leading-none text-slate-400";
-        }
-      }
-
-      function prepareSubmit() {
-        const starterCards = document.querySelectorAll(
-          "#starters-zone .player-card",
-        );
-        const ids = Array.from(starterCards).map((c) =>
-          c.getAttribute("data-id"),
-        );
-        document.getElementById("starterIdsInput").value = ids.join(",");
-      }
-
-      window.onload = validateLineup;
-    </script>
+    <script th:src="@{/tactics.js}"></script>
   </body>
 </html>

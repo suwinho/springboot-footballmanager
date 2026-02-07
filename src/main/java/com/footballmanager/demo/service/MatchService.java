@@ -5,6 +5,7 @@ import com.footballmanager.demo.model.Player;
 import java.util.Comparator;
 
 import com.footballmanager.demo.model.LeagueTable;
+import com.footballmanager.demo.model.Match;
 import com.footballmanager.demo.model.MatchEvent;
 import com.footballmanager.demo.model.Team;
 import com.footballmanager.demo.repository.LeagueRepository;
@@ -74,7 +75,7 @@ public class MatchService {
 
     private double calculateFormationsStrength(Team team, boolean offensive) {
         return team.getPlayers().stream()
-            .filter(p -> p.isInFirstEleven()) 
+            .filter(p -> p.isInFirstEleven() && p.getInjuryDays() == 0) 
             .mapToDouble(p -> {
             double baseStat = offensive ? p.getOffensiveStats() : p.getDefensiveStats();
             double staminaMultiplier = (p.getStamina() + 100) / 200.0;
@@ -143,5 +144,37 @@ public class MatchService {
                 playerRepository.save(p);
             }
         }
+    }
+
+    public void simulateAiMatch(Match match) {
+        Team home = match.getHomeTeam();
+        Team away = match.getAwayTeam();
+        double homeAttack = calculateFormationsStrength(home, true);
+        double homeDefense = calculateFormationsStrength(home, false);
+        double awayAttack = calculateFormationsStrength(away, true);
+        double awayDefense = calculateFormationsStrength(away, false);
+
+        homeAttack *= 1.05;
+        homeDefense *= 1.05;
+        int homeGoals = generateGoals(homeAttack, awayDefense);
+        int awayGoals = generateGoals(awayAttack, homeDefense);
+        match.setHomeGoals(homeGoals);
+        match.setAwayGoals(awayGoals);
+        match.setPlayed(true);
+
+        updateLeagueTable(home, away, homeGoals, awayGoals);
+    }
+
+    private int generateGoals(double attack, double defense) {
+        Random rand = new Random();
+        double ratio = attack / defense;
+        int goals = 0;
+
+        for (int i = 0; i < 5; i++) {
+            if (rand.nextDouble() < (0.2 * ratio)) {
+                goals++;
+            }
+        }
+        return goals;
     }
 }

@@ -98,18 +98,9 @@ public class ViewController {
         List<Match> todaysMatches = matchRepository.findByDate(currentDate);
         for (Match match : todaysMatches) {
             if (!match.isPlayed()) {
-                int hG = new Random().nextInt(4);
-                int aG = new Random().nextInt(4);
-                match.setHomeGoals(hG);
-                match.setAwayGoals(aG);
-                match.setPlayed(true);
-                matchService.updateLeagueTable(match.getHomeTeam(), match.getAwayTeam(), hG, aG);
+                matchService.simulateAiMatch(match);
             }
-            match.setHomeGoals(new Random().nextInt(5));
-            match.setAwayGoals(new Random().nextInt(5));
-            match.setPlayed(true);
-            matchRepository.save(match);
-        }
+    }
         
         carrerService.advanceDay();
         carrerService.generateIncomingOffer();
