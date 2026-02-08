@@ -20,4 +20,11 @@ public class Team {
 
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
     private List<Player> players; 
+
+    @Column(name = "youth_level", nullable = false)
+    @org.hibernate.annotations.ColumnDefault("1")
+    private int youthLevel = 1;
+    public long getUpgradeCost() {
+        return youthLevel * 20000000L; 
+    }
 }

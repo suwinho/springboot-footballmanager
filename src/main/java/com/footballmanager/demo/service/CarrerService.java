@@ -5,6 +5,7 @@ import com.footballmanager.demo.repository.PlayerRepository;
 import com.footballmanager.demo.repository.SeasonHistoryRepository;
 import com.footballmanager.demo.repository.TeamRepository;
 import com.footballmanager.demo.repository.TransferOfferRepository;
+import com.footballmanager.demo.repository.YouthPlayerRepository;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -24,6 +25,7 @@ import com.footballmanager.demo.model.Player;
 import com.footballmanager.demo.model.SeasonHistory;
 import com.footballmanager.demo.model.Team;
 import com.footballmanager.demo.model.TransferOffer;
+import com.footballmanager.demo.model.YouthPlayer;
 import com.footballmanager.demo.model.News;
 
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,7 @@ public class CarrerService {
     private final TransferOfferRepository offerRepository;
     private final TeamService teamService;
     private final NewsRepository newsRepository;
+    private final YouthPlayerRepository youthPlayerRepository;
 
     @Transactional 
     public String transferPlayer(Long playerID, Long targetTeamID) {
@@ -78,6 +81,9 @@ public class CarrerService {
         }
         if (gameState.getGameDate().getDayOfWeek().getValue() == 7) {
             developPlayers();
+        }
+        if (gameState.getGameDate().getDayOfMonth() == 1) {
+            generateYouthPlayers();
         }
         simulateAITransfers();
         handleInjuries();
@@ -292,6 +298,61 @@ public class CarrerService {
             }
         }
         playerRepository.saveAll(allPlayers);
+    }
+
+    @Transactional
+    public void generateYouthPlayers() {
+        Random rand = new Random();
+        List<String> firstNames = playerRepository.findAll().stream().map(Player :: getFirstName).distinct().toList();
+        List<String> lastNames = playerRepository.findAll().stream().map(Player :: getLastName).distinct().toList();
+
+        for (int i = 0; i < 6; i++) {
+            int ovr = rand.nextInt(10) + 45;
+            int pot = rand.nextInt(25) + 70;
+            YouthPlayer youth = YouthPlayer.builder()
+                .firstName(firstNames.get(rand.nextInt(firstNames.size())))
+                .lastName(lastNames.get(rand.nextInt(lastNames.size())))
+                .age(16)
+                .overall(ovr)
+                .potential(pot)
+                .marketValue(250000) 
+                .offensiveStats(ovr + rand.nextInt(10))
+                .deffensiveStats(ovr - rand.nextInt(10))
+                .build();
+            youthPlayerRepository.save(youth);
+        } 
+        addNews("RYNEK: Skauci przybyli z nowymi młodzikami!", "YOUTH");
+    }
+
+    @Transactional
+    public String signYouthPlayer(Long youthId) {
+        Team myTeam = teamRepository.findById(1L).orElseThrow();
+        YouthPlayer youth = youthPlayerRepository.findById(youthId).orElseThrow();
+        if (myTeam.getBudget() < youth.getMarketValue()) {
+            return "Brak funduszy na kontrakt!";
+        }
+
+        Player newPlayer = new Player();
+        newPlayer.setFirstName(youth.getFirstName());
+        newPlayer.setLastName(youth.getLastName());
+        newPlayer.setAge(youth.getAge());
+        newPlayer.setOverall(youth.getOverall());
+        newPlayer.setPotential(youth.getPotential());
+        newPlayer.setMarketValue(1000000);
+        newPlayer.setStamina(100);
+        newPlayer.setTeam(myTeam);
+        newPlayer.setInFirstEleven(false);
+        newPlayer.setOffensiveStats(youth.getOffensiveStats());
+        newPlayer.setDefensiveStats(youth.getDeffensiveStats());
+        newPlayer.setInjuryDays(0);
+
+        myTeam.setBudget(myTeam.getBudget() - youth.getMarketValue());
+
+        playerRepository.save(newPlayer);
+        youthPlayerRepository.delete(youth); 
+
+        addNews("TRANSFER: " + newPlayer.getLastName() + " podpisał swój pierwszy profesjonalny kontrakt!", "INFO");
+        return "Success";
     }
 
 }
