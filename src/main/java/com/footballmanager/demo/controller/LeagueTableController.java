@@ -2,6 +2,8 @@ package com.footballmanager.demo.controller;
 
 import com.footballmanager.demo.model.GameState;
 import com.footballmanager.demo.model.LeagueTable;
+import com.footballmanager.demo.model.Team;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,7 +34,9 @@ public class LeagueTableController {
     @GetMapping("/table") 
     public String showTable(Model model) {
         List<LeagueTable> table = leagueRepository.findAllOrderByPoints();
+        Team userTeam = gameStateRepository.findById(1L).orElseThrow().getUserTeam();
         model.addAttribute("leagueTable", table);
+        model.addAttribute("userTeamId", userTeam.getId());
         return "league";
     }
 

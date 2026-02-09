@@ -31,6 +31,8 @@ public class TeamService {
 
     public void makeSquadComplete(Long teamdId) {
         Team team = teamRepository.findById(teamdId).orElseThrow();
+        boolean hasReserves = team.getPlayers().stream().anyMatch(p -> !p.isInFirstEleven());
+        if (!hasReserves) return;
         double offensiveStats = team.getPlayers().stream()
             .filter(p -> p.isInFirstEleven()) 
             .mapToDouble(p -> p.getOffensiveStats())

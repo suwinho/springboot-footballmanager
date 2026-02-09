@@ -60,25 +60,29 @@ public class ViewController {
 
     @GetMapping("/") 
     public String getMain(Model model) {
-        Team team = teamRepository.findById(1L).orElse(null);
-        List<LeagueTable> table = leagueRepository.findAllOrderByPoints();
-        if (team != null) {
-            model.addAttribute("team", team);
-            model.addAttribute("players", team.getPlayers());
-        }
         GameState state = gameStateRepository.findById(1L).orElseGet(() -> {
-        GameState newState = new GameState();
-        newState.setGameDate(LocalDate.now());
-        newState.setCurrentWeek(1);
-        return gameStateRepository.save(newState);
+            GameState newState = new GameState();
+            newState.setGameDate(LocalDate.now());
+            newState.setCurrentWeek(1);
+            return gameStateRepository.save(newState);
         });
-        List<SeasonHistory> topHistory = seasonHistoryRepository.findAll(
-            Sort.by(Sort.Direction.DESC, "year")
-        ).stream().limit(3).toList();
-        List<Match> upcomingMatches = matchRepository.findUpcomingMatches(state.getGameDate());
+
+        if (state.getUserTeam() == null) {
+            return "redirect:/select-team";
+        }
+
+        Team team = state.getUserTeam();
+        List<LeagueTable> table = leagueRepository.findAllOrderByPoints();
+
+        model.addAttribute("team", team);
+        model.addAttribute("players", team.getPlayers());
+
         List<TransferOffer> activeOffers = offerRepository.findAll().stream()
-            .filter(o -> o.isActive() && o.getPlayer().getTeam().getId() == 1L)
+            .filter(o -> o.isActive() && o.getPlayer().getTeam().getId().equals(team.getId()))
             .toList();
+        List<SeasonHistory> topHistory = seasonHistoryRepository.findAll(
+            Sort.by(Sort.Direction.DESC, "year")).stream().limit(3).toList();
+        List<Match> upcomingMatches = matchRepository.findUpcomingMatches(state.getGameDate());
         List<News> newsFeed = newsRepository.findTop10ByOrderByDateDescIdDesc();
         model.addAttribute("newsFeed", newsFeed);
         model.addAttribute("upcomingMatches",upcomingMatches);

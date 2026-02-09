@@ -8,6 +8,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.footballmanager.demo.model.Team;
+import com.footballmanager.demo.repository.GameStateRepository;
 import com.footballmanager.demo.repository.TeamRepository;
 import com.footballmanager.demo.repository.YouthPlayerRepository;
 import com.footballmanager.demo.service.CarrerService;
@@ -20,11 +21,13 @@ public class YouthController {
     private final YouthPlayerRepository youthPlayerRepository;
     private final CarrerService carrerService;
     private final TeamRepository teamRepository;
+    private final GameStateRepository gameStateRepository;
 
     @GetMapping("/youth-academy")
     public String getYouthMarket(Model model) {
+        Team myTeam = gameStateRepository.findById(1L).orElseThrow().getUserTeam();
         model.addAttribute("talents", youthPlayerRepository.findAll());
-        model.addAttribute("team", teamRepository.findById(1L).get());
+        model.addAttribute("team", myTeam);
         return "youth-academy";
     }
 
@@ -34,8 +37,8 @@ public class YouthController {
         return "redirect:/youth-academy";
     }
     @PostMapping("/youth/upgrade")
-public String upgradeYouth(RedirectAttributes ra) {
-    Team team = teamRepository.findById(1L).get();
+    public String upgradeYouth(RedirectAttributes ra) {
+    Team team = gameStateRepository.findById(1L).orElseThrow().getUserTeam();
     long cost = team.getUpgradeCost();
 
     if (team.getBudget() >= cost && team.getYouthLevel() < 5) {

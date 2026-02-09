@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import com.footballmanager.demo.model.Team;
 import com.footballmanager.demo.model.Player;
+import com.footballmanager.demo.repository.GameStateRepository;
 import com.footballmanager.demo.repository.TeamRepository;
 import com.footballmanager.demo.service.TeamService;
 
@@ -19,9 +20,16 @@ import lombok.RequiredArgsConstructor;
 public class SquadController {
     private final TeamRepository teamRepository;
     private final TeamService teamService;
+    private final GameStateRepository gameStateRepository;
 
     @GetMapping("/lineup/{teamId}")
     public String showLineupEditor(@PathVariable Long teamId, Model model) {
+        Team userTeam = gameStateRepository.findById(1L).orElseThrow().getUserTeam();
+    
+        if (!teamId.equals(userTeam.getId())) {
+            return "redirect:/lineup/" + userTeam.getId();
+        }
+
         Team team = teamRepository.findById(teamId).orElseThrow();
 
         List<Player> allPlayers = team.getPlayers();

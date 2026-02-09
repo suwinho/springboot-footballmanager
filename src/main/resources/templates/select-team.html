@@ -1,0 +1,89 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Wybierz swój klub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .glass {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .team-card {
+        transition: all 0.3s ease;
+      }
+      .team-card:hover {
+        transform: scale(1.02);
+        border-color: white;
+        background: rgba(255, 255, 255, 0.07);
+      }
+    </style>
+  </head>
+  <body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-10">
+    <div class="max-w-6xl mx-auto">
+      <header class="text-center mb-16">
+        <h1
+          class="text-5xl font-black uppercase italic tracking-tighter mb-4 text-white"
+        >
+          Rozpocznij Karierę
+        </h1>
+        <p class="text-slate-500 font-bold uppercase tracking-[0.3em] text-xs">
+          Wybierz klub, który poprowadzisz do chwały
+        </p>
+      </header>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div
+          th:each="t : ${allTeams}"
+          class="team-card glass p-8 rounded-[2.5rem] flex flex-col items-center text-center"
+        >
+          <div
+            class="w-20 h-20 bg-white/10 rounded-full mb-6 flex items-center justify-center text-3xl font-black italic"
+            th:text="${t.name.substring(0,1)}"
+          >
+            M
+          </div>
+          <h2 class="text-2xl font-black uppercase mb-2" th:text="${t.name}">
+            Team Name
+          </h2>
+
+          <div
+            class="grid grid-cols-2 gap-4 w-full my-6 border-y border-white/5 py-4"
+          >
+            <div>
+              <p class="text-[8px] text-slate-500 uppercase font-black">
+                Budżet
+              </p>
+              <p
+                class="font-mono text-sm text-green-400"
+                th:text="${#numbers.formatDecimal(t.budget, 0, 'WHITESPACE', 0, 'POINT') + ' €'}"
+              ></p>
+            </div>
+            <div>
+              <p class="text-[8px] text-slate-500 uppercase font-black">
+                Poziom Akademii
+              </p>
+              <p class="text-sm font-bold" th:text="${'LVL ' + t.youthLevel}">
+                LVL 1
+              </p>
+            </div>
+          </div>
+
+          <form
+            th:action="@{'/select-team/' + ${t.id}}"
+            method="post"
+            class="w-full"
+          >
+            <button
+              type="submit"
+              class="w-full bg-white text-black py-4 rounded-2xl font-black text-xs uppercase hover:invert transition-all"
+            >
+              Obejmij posadę
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

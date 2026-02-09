@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.footballmanager.demo.repository.GameStateRepository;
 import com.footballmanager.demo.repository.PlayerRepository;
 import com.footballmanager.demo.repository.TeamRepository;
 import com.footballmanager.demo.service.CarrerService;
@@ -26,11 +27,13 @@ public class TransferController {
     private final PlayerRepository playerRepository;
     private final CarrerService carrerService;
     private final TeamService teamService;
+    private final GameStateRepository gameStateRepository;
 
     @GetMapping("/transfer") 
     public String showPlayersToTransfer(Model model) {
-        List<Player> playersToShow = playerRepository.findAll().stream().filter(p -> p.getTeam() == null || p.getTeam().getId() != 1L).toList();
-        Team myTeam = teamRepository.findById(1L).orElseThrow();
+        Team myTeam = gameStateRepository.findById(1L).orElseThrow().getUserTeam();
+        List<Player> playersToShow = playerRepository.findAll().stream().filter(p -> p.getTeam() == null || !p.getTeam().getId().equals(myTeam.getId())).toList();
+        
         model.addAttribute("players", playersToShow);
         model.addAttribute("myTeam", myTeam);
         return "transfer";
@@ -39,9 +42,10 @@ public class TransferController {
     @PostMapping("/transfer/buy")
     @Transactional
     public String makeTransfer(@RequestParam Long playerId) {
+        Team myTeam = gameStateRepository.findById(1L).orElseThrow().getUserTeam();
         Player player = playerRepository.findById(playerId).orElseThrow();
         Team team = player.getTeam();
-        carrerService.transferPlayer(playerId, 1L);
+        carrerService.transferPlayer(playerId, myTeam.getId());  
         teamService.makeSquadComplete(team.getId());
         return "redirect:/transfer";
     }

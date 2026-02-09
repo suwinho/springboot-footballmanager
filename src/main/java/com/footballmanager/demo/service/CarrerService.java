@@ -156,8 +156,8 @@ public class CarrerService {
         Random rand = new Random();
         if (rand.nextDouble() > 0.10) return;
 
-        Team myTeam = teamRepository.findById(1L).orElseThrow();
-        List<Team> otherTeams = teamRepository.findAll().stream().filter(t -> !t.getId().equals(1L)).toList();
+        Team myTeam = gameStateRepository.findById(1L).get().getUserTeam();
+        List<Team> otherTeams = teamRepository.findAll().stream().filter(t -> !t.getId().equals(myTeam.getId())).toList();
 
         if (otherTeams.isEmpty() || myTeam.getPlayers().isEmpty()) return;
 
@@ -212,6 +212,8 @@ public class CarrerService {
     public void developPlayers() {
         List<Player> allPlayers = playerRepository.findAll();
         Random rand = new Random();
+        Team myTeam = gameStateRepository.findById(1L).get().getUserTeam();
+        Long myTeamId = (myTeam != null) ? myTeam.getId() : -1L;
 
         for (Player p : allPlayers) {
             if (p.getOverall() < p.getPotential()) {           
@@ -220,8 +222,8 @@ public class CarrerService {
                 double finalChance = baseGrowthChance * difficultyMultiplier;            
                 if (rand.nextDouble() < finalChance) {
                     p.setOverall(p.getOverall() + 1);
-                    if (p.getTeam().getId() == 1L) {
-                        addNews("TRENING: " + p.getLastName() + " wygląda świetnie na treningach! (+1 OVR)", "TRAINING");
+                    if (p.getTeam() != null && p.getTeam().getId().equals(myTeamId)) {
+                        addNews("TRENING: " + p.getLastName() + " wygląda świetnie! (+1 OVR)", "TRAINING");
                     }
                     if (p.getOffensiveStats() > p.getDefensiveStats()) {
                         p.setOffensiveStats(p.getOffensiveStats() + 1);
@@ -242,8 +244,10 @@ public class CarrerService {
     public void simulateAITransfers() {
         Random rand = new Random();
         if (rand.nextDouble() > 0.2) return;
+        Team myTeam = gameStateRepository.findById(1L).get().getUserTeam();
+        Long myTeamId = (myTeam != null) ? myTeam.getId() : -1L;
         List<Team> aiTeams = teamRepository.findAll().stream()
-                .filter(t -> !t.getId().equals(1L))
+                .filter(t -> !t.getId().equals(myTeamId))
                 .toList();
 
         if (aiTeams.size() < 2) return;
@@ -275,11 +279,13 @@ public class CarrerService {
     public void handleInjuries() {
         List<Player> allPlayers = playerRepository.findAll();
         Random rand = new Random();
+        Team myTeam = gameStateRepository.findById(1L).get().getUserTeam();
+        Long myTeamId = (myTeam != null) ? myTeam.getId() : -1L;
 
         for (Player p : allPlayers) {
             if (p.getInjuryDays() > 0) {
                 p.setInjuryDays(p.getInjuryDays() - 1);
-                if (p.getInjuryDays() == 0 && p.getTeam().getId() == 1L) {
+                if (p.getInjuryDays() == 0 && p.getTeam().getId().equals(myTeamId)) {
                     addNews("MEDYK: " + p.getLastName() + " wrócił do treningów po kontuzji.", "INFO");
                 }
                 continue;
@@ -292,7 +298,7 @@ public class CarrerService {
                 p.setInjuryDays(duration);
                 p.setStamina(Math.max(0, p.getStamina() - 20));
 
-                if (p.getTeam().getId() == 1L) {
+                if (p.getTeam() != null && p.getTeam().getId().equals(myTeamId)) {
                     addNews("KONTUZJA: " + p.getLastName() + " wypada z gry na " + duration + " dni!", "WARNING");
                 }
             }
@@ -326,7 +332,7 @@ public class CarrerService {
 
     @Transactional
     public String signYouthPlayer(Long youthId) {
-        Team myTeam = teamRepository.findById(1L).orElseThrow();
+        Team myTeam = gameStateRepository.findById(1L).get().getUserTeam();
         YouthPlayer youth = youthPlayerRepository.findById(youthId).orElseThrow();
         if (myTeam.getBudget() < youth.getMarketValue()) {
             return "Brak funduszy na kontrakt!";

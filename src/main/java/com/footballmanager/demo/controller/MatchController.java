@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 
 import com.footballmanager.demo.service.CarrerService;
 import com.footballmanager.demo.service.MatchService;
+import com.footballmanager.demo.repository.GameStateRepository;
 import com.footballmanager.demo.repository.MatchRepository;
 import com.footballmanager.demo.repository.TeamRepository;
 
@@ -22,12 +23,17 @@ public class MatchController {
     private final MatchService matchService;
     private final MatchRepository matchRepository;
     private final CarrerService carrerService;
+    private final GameStateRepository gameStateRepository;
 
     @GetMapping("/match/simulate/{homeId}/{awayId}")
     public String simulate(@PathVariable Long homeId, @PathVariable Long awayId, Model model) {
         Team home = teamRepository.findById(homeId).orElseThrow();
         Team away = teamRepository.findById(awayId).orElseThrow();
+        Team userTeam = gameStateRepository.findById(1L).orElseThrow().getUserTeam();
         
+        if (!homeId.equals(userTeam.getId()) && !awayId.equals(userTeam.getId())) {
+            return "redirect:/"; 
+        }   
         List<MatchEvent> events = matchService.simulateMatch(home, away);
         int homeGoals = (int) events.stream()
             .filter(e -> "GOAL".equals(e.getType()) && e.getTeamName().equals(home.getName()))
