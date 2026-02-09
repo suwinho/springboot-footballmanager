@@ -1,13 +1,21 @@
 # Football Manager - Spring Boot Demo
 
-A lightweight **Football Manager** simulation game built with **Spring Boot 4**. This project allows users to manage football teams, browse player statistics, and simulate matches using a "FIFA 16" inspired live-simulation interface.
+A lightweight and modern **Football Manager** simulation game built with **Spring Boot 4**. Manage any team in the league, scout for wonderkids in your academy.
 
 ## 🚀 Features
 
-- **Team Dashboard:** View your squad details, individual player stats, and club budget.
-- **Advanced Match Engine:** A probability-based simulation that calculates outcomes using player offensive and defensive statistics.
-- **FIFA 16 Style Live View:** A real-time match interface that displays events (goals, saves, cards) minute-by-minute.
-- **In-Memory Database:** Powered by **H2**, with automatic data seeding through `import.sql`.
+- **Multi-Club Management:** Start your career by choosing ANY team in the league. The entire dashboard and economy adapt to your selection.
+- **Youth Academy & Scouting:** - Generate and recruit young talents.
+  - Upgrade your academy infrastructure (Level 1-5) to increase scouting precision.
+  - Dynamic potential estimation based on your club's scouting level.
+- **Advanced Match Engine:** A probability-based simulation calculating outcomes using player-specific offensive/defensive stats and current stamina.
+- **Interactive Match Live View:** - Real-time minute-by-minute simulation.
+  - Dynamic events: goals, saves, misses, and yellow cards.
+  - Visual analytics: possession bars and momentum indicators.
+- **Economy & Transfers:** - Realistic market value scaling.
+  - AI-driven transfer offers for your players.
+  - Squad management (starters vs. reserves).
+- **Dynamic News Feed:** Stay updated with injury reports, transfer breakthroughs, and training progress.
 
 ## 🛠 Tech Stack
 
@@ -32,8 +40,15 @@ A lightweight **Football Manager** simulation game built with **Spring Boot 4**.
    ```bash
    mvn spring-boot:run
    ```
-3. **Explore:**
-   - Main Menu: http://localhost:8080
-   - Team Dashboard: http://localhost:8080/dashboard/1
-   - Match Showcase: http://localhost:8080/match/simulate/1/2
+3. **How to play:**
+   - New Career: Go to http://localhost:8080 (you will be redirected to the Team Selection screen).
+   - Dashboard: Manage your squad, check league table, and advance days.
+   - Youth Academy: Visit /youth-academy to scout for new prospects and upgrade facilities.
+   - Transfers: Browse the market to strengthen your squad.
    - H2 Console: http://localhost:8080/h2-console (JDBC URL: jdbc:h2:mem:footballmgr)
+
+4. **Screens:**
+   ![Dashboard](screenshots/dashboard.png)
+   ![Squad](screenshots/squad.png)
+   ![Youth Academy](screenshots/youth-academy.png)
+   ![Match](screenshots/match.png)

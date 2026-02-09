@@ -32,7 +32,12 @@ public class TransferController {
     @GetMapping("/transfer") 
     public String showPlayersToTransfer(Model model) {
         Team myTeam = gameStateRepository.findById(1L).orElseThrow().getUserTeam();
-        List<Player> playersToShow = playerRepository.findAll().stream().filter(p -> p.getTeam() == null || !p.getTeam().getId().equals(myTeam.getId())).toList();
+        List<Player> playersToShow = playerRepository.findAll().stream()
+            .filter(p -> {
+                if (p.getTeam() == null) return true;
+                return !p.getTeam().getId().equals(myTeam.getId());
+            })
+            .toList();
         
         model.addAttribute("players", playersToShow);
         model.addAttribute("myTeam", myTeam);
