@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -28,12 +29,35 @@ public class MatchService {
     private final LeagueRepository leagueRepository;
     private final PlayerRepository playerRepository;
 
-    public List<MatchEvent> simulateMatch(Team home, Team away) {
+    @Transactional
+    public List<MatchEvent> simulateMatch(Team home, Team away, String homeMentality) {
         List<MatchEvent> events = new ArrayList<>();
         Random rand = new Random();
 
+        double defenseMod = 1.0;
+        double cardChanceMod = 1.0;
+        double staminaFatigueMod = 1.0;
+
+        switch (homeMentality) {
+            case "AGRESSIVE": 
+                defenseMod = 1.30;   
+                cardChanceMod = 2.5; 
+                staminaFatigueMod = 1.5; 
+                break;
+            case "CALM": 
+                defenseMod = 0.75;   
+                cardChanceMod = 0.3; 
+                staminaFatigueMod = 0.6; 
+                break;
+            default: 
+                defenseMod = 1.0;
+                cardChanceMod = 1.0;
+                staminaFatigueMod = 1.0;
+                break;
+        }
+        
         double homeAttack = calculateFormationsStrength(home, true);
-        double homeDefense = calculateFormationsStrength(home, false);
+        double homeDefense = calculateFormationsStrength(home, false) * defenseMod;
         double awayAttack = calculateFormationsStrength(away, true);
         double awayDefense = calculateFormationsStrength(away, false);
 
@@ -44,13 +68,13 @@ public class MatchService {
             if (rand.nextDouble() < 0.15) { 
                 
                 if (rand.nextDouble() * (homeAttack + awayDefense) < homeAttack) {
-                    MatchEvent result = resolveAction(home, away, min, rand);
+                    MatchEvent result = resolveAction(home, away, min, rand, 1.0);
                     if (result != null) {
                         events.add(result);
                         if (result.getType().equals("GOAL")) homeScore++;
                     }
                 } else {
-                    MatchEvent result = resolveAction(away, home, min, rand);
+                    MatchEvent result = resolveAction(away, home, min, rand, defenseMod);
                     if (result != null) {
                         events.add(result);
                         if (result.getType().equals("GOAL")) awayScore++;
@@ -58,13 +82,21 @@ public class MatchService {
                 }
             }
             
+            double baseCardChance = 0.01;
+            if (rand.nextDouble() < (baseCardChance * cardChanceMod)) {
+                List<Player> starters = home.getPlayers().stream().filter(Player::isInFirstEleven).toList();
+                if (!starters.isEmpty()) {
+                    Player p = starters.get(rand.nextInt(starters.size()));
+                    events.add(new MatchEvent(min, "YELLOW_CARD", "Faul!", home.getName(), p.getLastName()));
+                }
+            }
+
             if (rand.nextDouble() < 0.01) {
                 List<Player> starters = away.getPlayers().stream().filter(Player::isInFirstEleven).toList();
                 if (!starters.isEmpty()) {
                     Player p = starters.get(rand.nextInt(starters.size()));
                     events.add(new MatchEvent(min, "YELLOW_CARD", "Faul!", away.getName(), p.getLastName()));
                 }
-                
             }
         }
         boolean homeWin = homeScore > awayScore;
@@ -72,8 +104,9 @@ public class MatchService {
 
         updatePlayerPostMatch(home, homeScore, awayScore, homeWin, draw);
         updatePlayerPostMatch(away, awayScore, homeScore, !homeWin && !draw, draw);
-        decreaseStamina(home.getPlayers());
-        decreaseStamina(away.getPlayers());
+        
+        decreaseStaminaCustom(home.getPlayers(), staminaFatigueMod);
+        decreaseStaminaCustom(away.getPlayers(), 1.0);
         updateLeagueTable(home, away, homeScore, awayScore);
         return events;
     }
@@ -91,15 +124,25 @@ public class MatchService {
             .average()
             .orElse(0.0);
     }
-    private MatchEvent resolveAction(Team attacker, Team defender, int min, Random rand) {
-        Player forward = attacker.getPlayers().stream().max(Comparator.comparingInt(Player::getOffensiveStats)).get();
-        Player goalie = defender.getPlayers().stream().max(Comparator.comparingInt(Player::getDefensiveStats)).get();
-        double forwardStaminaFactor = (forward.getStamina() + 50) / 150.0; 
-        double goalieStaminaFactor = (goalie.getStamina() + 50) / 150.0;
-        double effectiveAttack = forward.getOffensiveStats() * 1.2 * forwardStaminaFactor;
-        double effectiveDefense = goalie.getDefensiveStats() * 0.8 * goalieStaminaFactor;
+    private MatchEvent resolveAction(Team attacker, Team defender, int min, Random rand, double defenseMod) {
+        double teamAttackPower = calculateFormationsStrength(attacker, true);
+        double teamDefensePower = calculateFormationsStrength(defender, false) * defenseMod;
+        Player forward = attacker.getPlayers().stream()
+            .filter(Player::isInFirstEleven)
+            .max(Comparator.comparingInt(p -> p.getOffensiveStats() + rand.nextInt(20)))
+            .orElse(attacker.getPlayers().get(0));
 
-        double scoringChance = effectiveAttack - effectiveDefense;
+        Player goalie = defender.getPlayers().stream()
+            .filter(Player::isInFirstEleven)
+            .max(Comparator.comparingInt(Player::getDefensiveStats))
+            .orElse(defender.getPlayers().get(0));
+
+        double forwardStaminaMod = 0.7 + (forward.getStamina() / 100.0 * 0.3);
+        double goalieStaminaMod = 0.7 + (goalie.getStamina() / 100.0 * 0.3);
+        double finalAttack = teamAttackPower * 1.2 * forwardStaminaMod;
+        double finalDefense = teamDefensePower * goalieStaminaMod;
+        double scoringChance = finalAttack - finalDefense;
+        scoringChance = Math.max(scoringChance, 5.0);
         double roll = rand.nextDouble() * 100;
 
         if (roll < scoringChance * 0.3) {
@@ -207,4 +250,31 @@ public class MatchService {
         }
         playerRepository.saveAll(team.getPlayers());
     }
+
+    public double calculateCardChance(String tacticsMode) {
+        return switch (tacticsMode) {
+            case "AGRESSIVE" -> 0.03; 
+            case "CALM" -> 0.005;     
+            default -> 0.01;          
+        };
+    }
+    public double getDefenseMultiplier(String tacticsMode) {
+        return switch (tacticsMode) {
+            case "AGRESSIVE" -> 1.2;  
+            case "CALM" -> 0.8;       
+            default -> 1.0;
+        };
+    }
+
+    private void decreaseStaminaCustom(List<Player> players, double factor) {
+        for (Player p : players) {
+            if (p.isInFirstEleven()) {
+                int baseFatigue = new Random().nextInt(11) + 10;
+                int finalFatigue = (int) (baseFatigue * factor);
+                p.setStamina(Math.max(0, p.getStamina() - finalFatigue));
+                playerRepository.save(p);
+            }
+        }
+    }
+    
 }

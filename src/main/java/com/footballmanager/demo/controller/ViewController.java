@@ -1,7 +1,7 @@
 package com.footballmanager.demo.controller;
 
 import java.time.LocalDate;
-
+import java.util.ArrayList;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +30,7 @@ import com.footballmanager.demo.repository.TransferOfferRepository;
 import com.footballmanager.demo.service.CarrerService;
 import com.footballmanager.demo.service.MatchService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -86,6 +87,41 @@ public class ViewController {
             Sort.by(Sort.Direction.DESC, "year")).stream().limit(3).toList();
         List<Match> upcomingMatches = matchRepository.findUpcomingMatches(state.getGameDate());
         List<News> newsFeed = newsRepository.findTop10ByOrderByDateDescIdDesc();
+
+        GameState gameState = gameStateRepository.findById(1L).orElseThrow();
+        Team userTeam = gameState.getUserTeam();
+        List<Match> lastMatches = matchRepository.findAllPlayedByTeamId(userTeam.getId()).stream().toList();
+        if (!lastMatches.isEmpty()) {
+            double totalPoints = 0;
+            for (Match m : lastMatches) {
+                if (m.getHomeGoals() == m.getAwayGoals()) {
+                    totalPoints += 1; 
+                } else {
+                    boolean isHome = m.getHomeTeam().getId().equals(team.getId());
+                    boolean won = (isHome && m.getHomeGoals() > m.getAwayGoals()) || 
+                                  (!isHome && m.getAwayGoals() > m.getHomeGoals());
+                    if (won) totalPoints += 3;
+                }
+            }
+
+            double averagePoints = totalPoints / lastMatches.size();
+            if (averagePoints >= 2.0 && lastMatches.size() >= 3) {
+                if (Math.random() < 0.3) { 
+                    List<Team> otherTeams = teamRepository.findAll().stream()
+                            .filter(t -> !t.getId().equals(team.getId()))
+                            .toList();
+                    
+                    if (!otherTeams.isEmpty()) {
+                        ArrayList<Team> shuffleList = new ArrayList<>(otherTeams);
+                        Collections.shuffle(shuffleList);
+                        Team jobOfferTeam = shuffleList.get(0);
+                        model.addAttribute("jobOffer", jobOfferTeam);
+                        model.addAttribute("offerPoints", totalPoints);
+                    }
+                }
+            }
+        }
+
         model.addAttribute("newsFeed", newsFeed);
         model.addAttribute("upcomingMatches",upcomingMatches);
         model.addAttribute("leagueTable", table);
@@ -98,15 +134,6 @@ public class ViewController {
     @PostMapping("/advance-day")
     @Transactional
     public String advanceDay() {
-        List<Player> allPlayers = playerRepository.findAll();
-        for (Player p : allPlayers) {
-            if (p.getMorale() > 70) p.setMorale(p.getMorale() - 1);
-            if (p.getMorale() < 70) p.setMorale(p.getMorale() + 1);
-            if (p.getHappiness() < 30) {
-                p.setMorale(Math.max(0, p.getMorale() - 5));
-            }
-        }
-        
         GameState state = gameStateRepository.findById(1L)
             .orElseThrow(() -> new RuntimeException("GameState not found"));
         LocalDate currentDate = state.getGameDate();
@@ -133,5 +160,16 @@ public class ViewController {
     public String rejectOffer(@PathVariable Long id) {
         carrerService.rejectOffer(id);
         return "redirect:/";
+    }
+
+    @GetMapping("/career/accept/{newTeamId}")
+    public String acceptJob(@PathVariable Long newTeamId) {
+        GameState gameState = gameStateRepository.findById(1L).orElseThrow();
+        Team newTeam = teamRepository.findById(newTeamId).orElseThrow();
+
+        gameState.setUserTeam(newTeam);
+        gameStateRepository.save(gameState);
+
+        return "redirect:/"; 
     }
 }

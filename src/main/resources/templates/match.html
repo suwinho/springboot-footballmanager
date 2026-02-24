@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
-    <title>Match Live - FIFA 16 Style</title>
+    <title>Match</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       .lineup-container {
@@ -14,9 +14,17 @@
       .player-row {
         transition: all 0.3s ease;
       }
-      .sub-label {
-        font-size: 0.6rem;
-        letter-spacing: 0.1em;
+      .sub-btn {
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      .player-row:hover .sub-btn,
+      .sub-row:hover .sub-btn {
+        opacity: 1;
+      }
+      .active-selection {
+        background-color: rgba(59, 130, 246, 0.2);
+        border-color: #3b82f6 !important;
       }
       @keyframes goal-flash {
         0% {
@@ -32,29 +40,68 @@
       .flash-goal {
         animation: goal-flash 1s ease-out;
       }
+      .selectable-out {
+        cursor: pointer;
+        border: 1px solid #3b82f6 !important;
+        background-color: rgba(59, 130, 246, 0.1);
+      }
+      #subBanner {
+        transform: translateY(100%);
+        transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      #subBanner.show {
+        transform: translateY(0);
+      }
     </style>
   </head>
   <body class="bg-slate-900 text-white font-sans overflow-hidden">
+    <div
+      id="subBanner"
+      class="fixed bottom-0 left-0 right-0 h-20 bg-black/90 z-50 flex items-center justify-center border-t-4 border-green-500 shadow-2xl"
+    >
+      <div class="flex items-center gap-8">
+        <div class="text-right">
+          <div class="text-green-400 text-[10px] font-black uppercase">
+            Substitution In
+          </div>
+          <div id="bannerIn" class="text-xl font-black italic uppercase">
+            ---
+          </div>
+        </div>
+        <div class="text-3xl">🔄</div>
+        <div class="text-left">
+          <div class="text-red-500 text-[10px] font-black uppercase">
+            Substitution Out
+          </div>
+          <div
+            id="bannerOut"
+            class="text-xl font-black italic uppercase text-white/60"
+          >
+            ---
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="container mx-auto p-6 max-w-5xl">
       <div
         id="scoreboard"
         class="bg-blue-100 text-slate-900 p-6 rounded-t-lg flex justify-between items-center shadow-2xl border-b-4 border-blue-300"
       >
         <div
-          class="text-2xl font-black uppercase tracking-tighter w-1/3"
+          class="text-2xl font-black uppercase w-1/3"
           th:text="${homeTeam.name}"
         >
           HOME
         </div>
         <div
-          class="text-5xl font-mono bg-slate-800 text-white px-8 py-2 rounded shadow-inner border-2 border-slate-600 flex justify-center items-center gap-4"
+          class="text-5xl font-mono bg-slate-800 text-white px-8 py-2 rounded border-2 border-slate-600 flex justify-center items-center gap-4"
         >
-          <span id="homeScore">0</span>
-          <span class="text-2xl opacity-50">-</span>
-          <span id="awayScore">0</span>
+          <span id="homeScore">0</span><span class="opacity-50">-</span
+          ><span id="awayScore">0</span>
         </div>
         <div
-          class="text-2xl font-black uppercase tracking-tighter text-right w-1/3"
+          class="text-2xl font-black uppercase text-right w-1/3"
           th:text="${awayTeam.name}"
         >
           AWAY
@@ -66,18 +113,19 @@
       >
         <div
           class="p-4 border-r border-blue-200 lineup-container h-[550px] overflow-y-auto"
+          id="col-home"
         >
           <h3
             class="text-[10px] font-black text-blue-900/40 uppercase mb-3 tracking-widest"
           >
             Starting XI
           </h3>
-          <div id="homeStarters" class="mb-6">
+          <div class="starters-list mb-6">
             <div
               th:each="p : ${homePlayers}"
               th:if="${p.isInFirstEleven}"
               th:id="'player-' + ${p.lastName}"
-              class="player-row flex justify-between items-center mb-1 border-b border-blue-100 pb-1"
+              class="player-row flex justify-between items-center mb-1 border-b border-blue-100 pb-1 px-1 rounded"
             >
               <span class="font-bold text-xs" th:text="${p.lastName}"></span>
               <span class="card-slot flex gap-1"></span>
@@ -88,15 +136,23 @@
           >
             Substitutes
           </h3>
-          <div id="homeSubs">
+          <div class="subs-list">
             <div
               th:each="p : ${homePlayers}"
               th:if="${!p.isInFirstEleven}"
-              th:id="'player-' + ${p.lastName}"
-              class="flex justify-between items-center mb-1 text-[10px] opacity-50 border-b border-transparent pb-1"
+              th:id="'sub-' + ${p.lastName}"
+              class="sub-row flex justify-between items-center mb-1 text-[10px] border-b border-transparent pb-1 px-1 rounded"
             >
-              <span th:text="${p.lastName}"></span>
-              <span class="card-slot flex gap-1"></span>
+              <span th:text="${p.lastName}" class="opacity-50"></span>
+              <button
+                th:if="${homeTeam.id == userTeamId}"
+                type="button"
+                th:data-name="${p.lastName}"
+                onclick="prepareSub(this.getAttribute('data-name'), 'home')"
+                class="sub-btn bg-blue-600 text-white px-2 py-0.5 rounded text-[8px] font-bold uppercase"
+              >
+                In
+              </button>
             </div>
           </div>
         </div>
@@ -107,8 +163,7 @@
           <div
             class="text-center font-black text-4xl mb-6 text-blue-900 italic tracking-tighter"
           >
-            <span id="matchMinute">0</span
-            ><span class="text-xl inline-block ml-1">'</span>
+            <span id="matchMinute">0</span>'
           </div>
           <div
             class="w-full space-y-3 overflow-y-auto h-[450px] pr-2 lineup-container"
@@ -118,18 +173,19 @@
 
         <div
           class="p-4 border-l border-blue-200 lineup-container h-[550px] overflow-y-auto text-right"
+          id="col-away"
         >
           <h3
             class="text-[10px] font-black text-blue-900/40 uppercase mb-3 tracking-widest text-right"
           >
             Starting XI
           </h3>
-          <div id="awayStarters" class="mb-6">
+          <div class="starters-list mb-6">
             <div
               th:each="p : ${awayPlayers}"
               th:if="${p.isInFirstEleven}"
               th:id="'player-' + ${p.lastName}"
-              class="player-row flex justify-between items-center flex-row-reverse mb-1 border-b border-blue-100 pb-1"
+              class="player-row flex justify-between items-center flex-row-reverse mb-1 border-b border-blue-100 pb-1 px-1 rounded"
             >
               <span class="font-bold text-xs" th:text="${p.lastName}"></span>
               <span class="card-slot flex gap-1"></span>
@@ -140,15 +196,23 @@
           >
             Substitutes
           </h3>
-          <div id="awaySubs">
+          <div class="subs-list text-right">
             <div
               th:each="p : ${awayPlayers}"
               th:if="${!p.isInFirstEleven}"
-              th:id="'player-' + ${p.lastName}"
-              class="flex justify-between items-center flex-row-reverse mb-1 text-[10px] opacity-50 border-b border-transparent pb-1"
+              th:id="'sub-' + ${p.lastName}"
+              class="sub-row flex justify-between items-center flex-row-reverse mb-1 text-[10px] border-b border-transparent pb-1 px-1 rounded"
             >
-              <span th:text="${p.lastName}"></span>
-              <span class="card-slot flex gap-1"></span>
+              <span th:text="${p.lastName}" class="opacity-50"></span>
+              <button
+                th:if="${awayTeam.id == userTeamId}"
+                type="button"
+                th:data-name="${p.lastName}"
+                onclick="prepareSub(this.getAttribute('data-name'), 'away')"
+                class="sub-btn bg-blue-600 text-white px-2 py-0.5 rounded text-[8px] font-bold uppercase"
+              >
+                In
+              </button>
             </div>
           </div>
         </div>
@@ -162,9 +226,10 @@
         Kick Off
       </button>
     </div>
+
     <div
       id="postMatchActions"
-      class="hidden mt-8 flex gap-4 animate-in fade-in zoom-in duration-700"
+      class="hidden mt-8 flex gap-4 max-w-5xl mx-auto px-6"
     >
       <a
         href="/table"
@@ -181,9 +246,47 @@
     <script th:inline="javascript">
       const events = [[${matchEvents}]];
       const homeName = [[${homeTeam.name}]];
+      const userTeamId = [[${userTeamId}]];
+
       let currentMin = 0;
       let homeScore = 0;
       let awayScore = 0;
+      let subsUsed = 0;
+
+      function prepareSub(nameIn, side) {
+          if (subsUsed >= 5) { alert("Limit 5 zmian wykorzystany!"); return; }
+          document.querySelectorAll('.player-row').forEach(r => r.classList.remove('selectable-out'));
+          document.querySelectorAll('.sub-row').forEach(r => r.classList.remove('active-selection'));
+          document.getElementById('sub-' + nameIn).classList.add('active-selection');
+          document.querySelectorAll(`#col-${side} .starters-list .player-row`).forEach(row => {
+              row.classList.add('selectable-out');
+              row.onclick = function() { finalizeSub(this, nameIn, side); };
+          });
+      }
+
+      function finalizeSub(rowOut, nameIn, side) {
+          const nameOut = rowOut.querySelector('span:first-child').innerText;
+          const banner = document.getElementById('subBanner');
+          document.getElementById('bannerIn').innerText = nameIn;
+          document.getElementById('bannerOut').innerText = nameOut;
+          banner.classList.add('show');
+          setTimeout(() => banner.classList.remove('show'), 4000);
+
+          const log = document.getElementById('matchLog');
+          const div = document.createElement('div');
+          div.className = "p-2 bg-blue-50 border-l-4 border-blue-400 text-[10px] text-slate-700 animate-in fade-in mb-2";
+          div.innerHTML = `<strong>${currentMin}' ZMIANA</strong>: ⬆️ ${nameIn} za ⬇️ ${nameOut}`;
+          log.prepend(div);
+
+          rowOut.querySelector('span:first-child').innerText = nameIn;
+          rowOut.id = 'player-' + nameIn;
+          document.getElementById('sub-' + nameIn).remove();
+          document.querySelectorAll('.player-row').forEach(row => {
+              row.classList.remove('selectable-out');
+              row.onclick = null;
+          });
+          subsUsed++;
+      }
 
       function addIconToPlayer(playerName, iconEmoji) {
           const playerEl = document.getElementById('player-' + playerName);
@@ -194,7 +297,6 @@
                   span.className = "animate-bounce inline-block";
                   span.innerText = iconEmoji;
                   slot.appendChild(span);
-                  playerEl.style.opacity = "1";
               }
           }
       }
@@ -204,57 +306,34 @@
           const interval = setInterval(() => {
               currentMin++;
               if(currentMin <= 90) document.getElementById('matchMinute').innerText = currentMin;
-
-              const currentEvents = events.filter(e => e.minute === currentMin);
-              currentEvents.forEach(e => {
+              events.filter(e => e.minute === currentMin).forEach(e => {
                   const log = document.getElementById('matchLog');
                   const div = document.createElement('div');
-                  div.className = "p-3 bg-white rounded-lg border-l-4 shadow-sm text-[11px] animate-in fade-in slide-in-from-top-2 duration-500 border-blue-800";
-
+                  div.className = "p-3 bg-white rounded-lg border-l-4 shadow-sm text-[11px] animate-in fade-in mb-2 border-blue-800";
                   let icon = "⚽";
-
                   if(e.type === 'GOAL') {
-                      if(e.teamName === homeName) homeScore++;
-                      else awayScore++;
+                      if(e.teamName === homeName) homeScore++; else awayScore++;
                       document.getElementById('homeScore').innerText = homeScore;
                       document.getElementById('awayScore').innerText = awayScore;
                       div.className = div.className.replace('border-blue-800', 'border-green-500 bg-green-50');
                       addIconToPlayer(e.playerName, "⚽");
-
-                      // Efekt błysku na tablicy
-                      const sb = document.getElementById('scoreboard');
-                      sb.classList.add('flash-goal');
-                      setTimeout(() => sb.classList.remove('flash-goal'), 1000);
+                      document.getElementById('scoreboard').classList.add('flash-goal');
+                      setTimeout(() => document.getElementById('scoreboard').classList.remove('flash-goal'), 1000);
                   }
-
                   if(e.type === 'YELLOW_CARD') {
                       icon = "🟨";
                       div.className = div.className.replace('border-blue-800', 'border-yellow-500 bg-yellow-50');
                       addIconToPlayer(e.playerName, "🟨");
                   }
-
-                  if(e.type === 'SAVE') icon = "🧤";
-                  if(e.type === 'MISS') icon = "❌";
-
-                  div.innerHTML = `
-                      <div class="flex justify-between font-black text-blue-900 mb-1 italic">
-                          <span>${e.minute}'</span>
-                          <span class="uppercase tracking-tighter">${e.teamName}</span>
-                      </div>
-                      <div class="flex items-center gap-2 text-slate-700">
-                          <span class="text-base">${icon}</span>
-                          <span><strong>${e.playerName}</strong>: ${e.description}</span>
-                      </div>
-                  `;
+                  div.innerHTML = `<div class="flex justify-between font-black text-blue-900 mb-1 italic"><span>${e.minute}'</span><span class="uppercase tracking-tighter">${e.teamName}</span></div><div class="flex items-center gap-2 text-slate-700"><span class="text-base">${icon}</span><span><strong>${e.playerName}</strong>: ${e.description}</span></div>`;
                   log.prepend(div);
               });
-
               if (currentMin >= 90) {
                   clearInterval(interval);
                   document.getElementById('matchMinute').innerText = "FT";
                   document.getElementById('postMatchActions').classList.remove('hidden');
               }
-          }, 150);
+          }, 200);
       }
     </script>
   </body>

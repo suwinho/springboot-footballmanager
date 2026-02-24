@@ -1,6 +1,7 @@
 package com.footballmanager.demo.controller;
 
 import com.footballmanager.demo.model.Team;
+import com.footballmanager.demo.model.GameState;
 import com.footballmanager.demo.model.Match;
 import com.footballmanager.demo.model.MatchEvent;
 import org.springframework.ui.Model;
@@ -15,7 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List; 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors; 
 @Controller
 @RequiredArgsConstructor
 public class MatchController {
@@ -31,10 +34,11 @@ public class MatchController {
         Team away = teamRepository.findById(awayId).orElseThrow();
         Team userTeam = gameStateRepository.findById(1L).orElseThrow().getUserTeam();
         
+        
         if (!homeId.equals(userTeam.getId()) && !awayId.equals(userTeam.getId())) {
             return "redirect:/"; 
         }   
-        List<MatchEvent> events = matchService.simulateMatch(home, away);
+        List<MatchEvent> events = matchService.simulateMatch(home, away, "NEUTRAL");
         int homeGoals = (int) events.stream()
             .filter(e -> "GOAL".equals(e.getType()) && e.getTeamName().equals(home.getName()))
             .count();
@@ -55,13 +59,24 @@ public class MatchController {
             matchInSchedule.setPlayed(true);
             matchRepository.save(matchInSchedule);
         }
+    
 
         model.addAttribute("homeTeam", home);
         model.addAttribute("awayTeam", away);
         model.addAttribute("homePlayers", home.getPlayers());
         model.addAttribute("awayPlayers", away.getPlayers());
         model.addAttribute("matchEvents", events);
-        
+        model.addAttribute("userTeamId", userTeam.getId());
         return "match";
+    }
+    @GetMapping("/career/accept/{newTeamId}")
+    public String acceptJob(@PathVariable Long newTeamId) {
+        GameState gameState = gameStateRepository.findById(1L).orElseThrow();
+        Team newTeam = teamRepository.findById(newTeamId).orElseThrow();
+
+        gameState.setUserTeam(newTeam);
+        gameStateRepository.save(gameState);
+
+        return "redirect:/"; 
     }
 }
