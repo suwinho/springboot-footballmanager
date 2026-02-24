@@ -37,4 +37,13 @@ public class Player {
     public boolean isInjured() {
         return injuryDays > 0;
     }
+    @Column(nullable = false)
+    @org.hibernate.annotations.ColumnDefault("70")
+    private int morale = 70;
+    @Column(nullable = false)
+    @org.hibernate.annotations.ColumnDefault("50")
+    private int sharpness = 50;
+    @Column(nullable = false)
+    @org.hibernate.annotations.ColumnDefault("100")
+    private int happiness = 100;
 }

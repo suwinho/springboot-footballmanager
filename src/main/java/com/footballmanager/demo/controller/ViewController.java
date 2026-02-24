@@ -23,6 +23,7 @@ import com.footballmanager.demo.repository.GameStateRepository;
 import com.footballmanager.demo.repository.LeagueRepository;
 import com.footballmanager.demo.repository.MatchRepository;
 import com.footballmanager.demo.repository.NewsRepository;
+import com.footballmanager.demo.repository.PlayerRepository;
 import com.footballmanager.demo.repository.SeasonHistoryRepository;
 import com.footballmanager.demo.repository.TeamRepository;
 import com.footballmanager.demo.repository.TransferOfferRepository;
@@ -47,6 +48,7 @@ public class ViewController {
     private final CarrerService carrerService;
     private final TransferOfferRepository offerRepository;
     private final NewsRepository newsRepository;
+    private final PlayerRepository playerRepository;
 
     @GetMapping("/dashboard/{teamId}")
     public String getDashboard(@PathVariable("teamId") Long teamId, Model model) {
@@ -96,6 +98,15 @@ public class ViewController {
     @PostMapping("/advance-day")
     @Transactional
     public String advanceDay() {
+        List<Player> allPlayers = playerRepository.findAll();
+        for (Player p : allPlayers) {
+            if (p.getMorale() > 70) p.setMorale(p.getMorale() - 1);
+            if (p.getMorale() < 70) p.setMorale(p.getMorale() + 1);
+            if (p.getHappiness() < 30) {
+                p.setMorale(Math.max(0, p.getMorale() - 5));
+            }
+        }
+        
         GameState state = gameStateRepository.findById(1L)
             .orElseThrow(() -> new RuntimeException("GameState not found"));
         LocalDate currentDate = state.getGameDate();

@@ -67,6 +67,11 @@ public class MatchService {
                 
             }
         }
+        boolean homeWin = homeScore > awayScore;
+        boolean draw = homeScore == awayScore;
+
+        updatePlayerPostMatch(home, homeScore, awayScore, homeWin, draw);
+        updatePlayerPostMatch(away, awayScore, homeScore, !homeWin && !draw, draw);
         decreaseStamina(home.getPlayers());
         decreaseStamina(away.getPlayers());
         updateLeagueTable(home, away, homeScore, awayScore);
@@ -78,8 +83,10 @@ public class MatchService {
             .filter(p -> p.isInFirstEleven() && p.getInjuryDays() == 0) 
             .mapToDouble(p -> {
             double baseStat = offensive ? p.getOffensiveStats() : p.getDefensiveStats();
+            double moraleBonus = 0.95 + (p.getSharpness() / 100 * 0.15);
+            double sharpnessBonus = 0.85 + (p.getSharpness() / 100.0 * 0.15);
             double staminaMultiplier = (p.getStamina() + 100) / 200.0;
-            return baseStat * staminaMultiplier;
+            return baseStat * staminaMultiplier * moraleBonus * sharpnessBonus;
         })
             .average()
             .orElse(0.0);
@@ -176,5 +183,28 @@ public class MatchService {
             }
         }
         return goals;
+    }
+
+    public void updatePlayerPostMatch(Team team, int goalsScored, int goalsConceded, boolean isWinner, boolean isDraw) {
+        for (Player p : team.getPlayers()) {
+            if (p.isInFirstEleven()) {
+                p.setSharpness(Math.min(100, p.getSharpness() + 10));
+                if (isWinner) {
+                    p.setMorale(Math.min(100, p.getMorale() + 5));
+                    p.setHappiness(Math.min(100, p.getHappiness() + 5));
+                } else if (isDraw) {
+                    p.setMorale(Math.min(100, p.getMorale() + 2));
+                } else {
+                    p.setMorale(Math.max(0, p.getMorale() - 5));
+                    p.setHappiness(Math.max(0, p.getHappiness() - 1));
+                }
+            } else {
+                p.setSharpness(Math.max(0, p.getSharpness() - 4));
+                if (p.getOverall() > 75) {
+                    p.setHappiness(Math.max(0, p.getHappiness() - 3));
+                }
+            }
+        }
+        playerRepository.saveAll(team.getPlayers());
     }
 }

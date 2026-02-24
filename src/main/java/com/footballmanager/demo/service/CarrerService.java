@@ -73,6 +73,11 @@ public class CarrerService {
         GameState gameState = gameStateRepository.findById(1L).get();
         List<Player> allPlayers = playerRepository.findAll();
         for (Player p : allPlayers) {
+            if (p.getMorale() > 70) p.setMorale(p.getMorale() - 1);
+            if (p.getMorale() < 70) p.setMorale(p.getMorale() + 1);
+            if (p.getHappiness() < 30) {
+                p.setMorale(Math.max(0, p.getMorale() - 5));
+            }
             if (p.getStamina() < 100) {
                 int recovery = p.isInFirstEleven() ? 5 : 12; 
                 int newStamina = Math.min(100, p.getStamina() + recovery);

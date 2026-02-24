@@ -105,6 +105,24 @@
                 <div>
                   <p class="player-name font-bold leading-none text-white">
                     <span th:text="${p.lastName}"></span>
+                    <span>
+                      <span th:if="${p.morale >= 80}">😊</span>
+                      <span th:if="${p.morale < 80 && p.morale >= 40}">😐</span>
+                      <span th:if="${p.morale < 40}">🙁</span>
+                    </span>
+                    <span class="font-bold">
+                      <span th:if="${p.sharpness >= 70}" class="text-green-600"
+                        >↑</span
+                      >
+                      <span
+                        th:if="${p.sharpness < 70 && p.sharpness >= 30}"
+                        class="text-yellow-600"
+                        >→</span
+                      >
+                      <span th:if="${p.sharpness < 30}" class="text-red-600"
+                        >↓</span
+                      >
+                    </span>
                     <span
                       th:if="${p.injuryDays > 0}"
                       class="ml-2 text-red-500 text-[10px] animate-pulse"
@@ -182,9 +200,33 @@
                 ></div>
                 <div>
                   <p
-                    class="player-name font-bold leading-none text-slate-400"
-                    th:text="${p.lastName}"
-                  ></p>
+                    class="player-name font-bold leading-none text-slate-200 flex items-center gap-2"
+                  >
+                    <span th:text="${p.lastName}"></span>
+                    <span>
+                      <span th:if="${p.morale >= 80}">😊</span>
+                      <span th:if="${p.morale < 80 && p.morale >= 40}">😐</span>
+                      <span th:if="${p.morale < 40}">🙁</span>
+                    </span>
+                    <span class="font-bold">
+                      <span th:if="${p.sharpness >= 70}" class="text-green-600"
+                        >↑</span
+                      >
+                      <span
+                        th:if="${p.sharpness < 70 && p.sharpness >= 30}"
+                        class="text-yellow-600"
+                        >→</span
+                      >
+                      <span th:if="${p.sharpness < 30}" class="text-red-600"
+                        >↓</span
+                      >
+                      <span
+                        th:if="${p.injuryDays > 0}"
+                        class="ml-2 text-red-500 text-[10px] animate-pulse"
+                        >🚑</span
+                      >
+                    </span>
+                  </p>
                   <p class="text-[10px] text-slate-600 uppercase mt-1">
                     REZERWA
                   </p>
