@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.data.domain.Sort;
 import com.footballmanager.demo.model.GameState;
@@ -171,5 +172,34 @@ public class ViewController {
         gameStateRepository.save(gameState);
 
         return "redirect:/"; 
+    }
+    @PostMapping("/api/match/finalize-live")
+    @ResponseBody
+    @Transactional
+    public String finalizeLiveMatch(
+            @RequestParam Long homeId, 
+            @RequestParam Long awayId, 
+            @RequestParam int homeScore, 
+            @RequestParam int awayScore) {
+        GameState state = gameStateRepository.findById(1L).orElseThrow();
+        Match match = matchRepository.findByDate(state.getGameDate()).stream()
+                .filter(m -> m.getHomeTeam().getId().equals(homeId) && m.getAwayTeam().getId().equals(awayId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono meczu do zapisania"));
+
+        if (!match.isPlayed()) {
+            match.setHomeGoals(homeScore);
+            match.setAwayGoals(awayScore);
+            match.setPlayed(true);
+
+            matchService.updateLeagueTable(match.getHomeTeam(), match.getAwayTeam(), homeScore, awayScore);
+
+            matchService.updatePlayerPostMatch(match.getHomeTeam(), homeScore, awayScore, homeScore > awayScore, homeScore == awayScore);
+            matchService.updatePlayerPostMatch(match.getAwayTeam(), awayScore, homeScore, awayScore > homeScore, homeScore == awayScore);
+
+            matchRepository.save(match);
+        }
+
+        return "Result synchronized";
     }
 }

@@ -21,6 +21,6 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     @Query("SELECT m FROM Match m WHERE m.date >= :date ORDER BY m.date ASC")
     List<Match> findUpcomingMatches(@Param("date") LocalDate date);
     @Query("SELECT m FROM Match m WHERE (m.homeTeam.id = :teamId OR m.awayTeam.id = :teamId) " +
-           "AND m.isPlayed = true ORDER BY m.id DESC")
+           "AND m.played = true ORDER BY m.id DESC")
     List<Match> findAllPlayedByTeamId(@Param("teamId") Long teamId);
 }

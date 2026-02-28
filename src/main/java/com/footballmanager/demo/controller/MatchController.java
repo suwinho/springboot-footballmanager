@@ -69,14 +69,35 @@ public class MatchController {
         model.addAttribute("userTeamId", userTeam.getId());
         return "match";
     }
-    @GetMapping("/career/accept/{newTeamId}")
-    public String acceptJob(@PathVariable Long newTeamId) {
-        GameState gameState = gameStateRepository.findById(1L).orElseThrow();
-        Team newTeam = teamRepository.findById(newTeamId).orElseThrow();
+    @GetMapping("/api/match/check-minute")
+    @ResponseBody
+    public List<MatchEvent> generateTacticalMatch(
+        @RequestParam int minute,
+        @RequestParam String mentality, 
+        @RequestParam Long homeId, 
+        @RequestParam Long awayId) {
+        
+        Team home = teamRepository.findById(homeId).orElseThrow();
+        Team away = teamRepository.findById(awayId).orElseThrow();
+        
+        return matchService.simulateSpecificMinute(home, away, minute, mentality);
+    }
 
-        gameState.setUserTeam(newTeam);
-        gameStateRepository.save(gameState);
-
-        return "redirect:/"; 
+    @PostMapping("/api/match/finalize")
+    @ResponseBody
+    public String finalizeMatch(
+            @RequestParam Long homeId, 
+            @RequestParam Long awayId, 
+            @RequestParam int homeScore, 
+            @RequestParam int awayScore) {
+            
+        Team home = teamRepository.findById(homeId).orElseThrow();
+        Team away = teamRepository.findById(awayId).orElseThrow();
+            
+        matchService.updateLeagueTable(home, away, homeScore, awayScore);
+        matchService.updatePlayerPostMatch(home, homeScore, awayScore, homeScore > awayScore, homeScore == awayScore);
+        matchService.updatePlayerPostMatch(away, awayScore, homeScore, awayScore > homeScore, homeScore == awayScore);
+            
+        return "Result Saved";
     }
 }

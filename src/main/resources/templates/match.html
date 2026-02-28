@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
-    <title>Match</title>
+    <title>Match Live</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       .lineup-container {
@@ -13,6 +13,7 @@
       }
       .player-row {
         transition: all 0.3s ease;
+        border: 1px solid transparent;
       }
       .sub-btn {
         opacity: 0;
@@ -28,13 +29,13 @@
       }
       @keyframes goal-flash {
         0% {
-          background-color: rgba(34, 197, 94, 0);
+          background-color: transparent;
         }
         50% {
           background-color: rgba(34, 197, 94, 0.4);
         }
         100% {
-          background-color: rgba(34, 197, 94, 0);
+          background-color: transparent;
         }
       }
       .flash-goal {
@@ -51,6 +52,12 @@
       }
       #subBanner.show {
         transform: translateY(0);
+      }
+      .active-mentality {
+        background-color: white !important;
+        color: #0f172a !important;
+        border-color: white !important;
+        transform: scale(1.05);
       }
     </style>
   </head>
@@ -84,6 +91,30 @@
     </div>
 
     <div class="container mx-auto p-6 max-w-5xl">
+      <div
+        id="tacticsPanel"
+        class="mb-4 flex justify-center gap-4 bg-slate-800/80 p-3 rounded-2xl border border-white/5 shadow-xl"
+      >
+        <button
+          onclick="setMentality('DEFENSIVE', this)"
+          class="mentality-btn bg-blue-900/50 px-6 py-2 rounded-xl text-[10px] font-black uppercase border border-blue-500/30 hover:bg-blue-800 transition"
+        >
+          🛡️ Defensywne
+        </button>
+        <button
+          onclick="setMentality('STANDARD', this)"
+          class="mentality-btn bg-slate-700 px-6 py-2 rounded-xl text-[10px] font-black uppercase border border-white/20 active-mentality"
+        >
+          ⚖️ Standardowe
+        </button>
+        <button
+          onclick="setMentality('OFFENSIVE', this)"
+          class="mentality-btn bg-red-900/50 px-6 py-2 rounded-xl text-[10px] font-black uppercase border border-red-500/30 hover:bg-red-800 transition"
+        >
+          ⚔️ Ofensywne
+        </button>
+      </div>
+
       <div
         id="scoreboard"
         class="bg-blue-100 text-slate-900 p-6 rounded-t-lg flex justify-between items-center shadow-2xl border-b-4 border-blue-300"
@@ -244,20 +275,30 @@
     </div>
 
     <script th:inline="javascript">
-      const events = [[${matchEvents}]];
       const homeName = [[${homeTeam.name}]];
       const userTeamId = [[${userTeamId}]];
+      const homeId = [[${homeTeam.id}]];
+      const awayId = [[${awayTeam.id}]];
 
+      let selectedMentality = 'STANDARD';
       let currentMin = 0;
       let homeScore = 0;
       let awayScore = 0;
       let subsUsed = 0;
 
+      function setMentality(mode, btn) {
+          selectedMentality = mode;
+          document.querySelectorAll('.mentality-btn').forEach(b => b.classList.remove('active-mentality'));
+          btn.classList.add('active-mentality');
+      }
+
       function prepareSub(nameIn, side) {
           if (subsUsed >= 5) { alert("Limit 5 zmian wykorzystany!"); return; }
           document.querySelectorAll('.player-row').forEach(r => r.classList.remove('selectable-out'));
           document.querySelectorAll('.sub-row').forEach(r => r.classList.remove('active-selection'));
-          document.getElementById('sub-' + nameIn).classList.add('active-selection');
+          const subEl = document.getElementById('sub-' + nameIn);
+          if(subEl) subEl.classList.add('active-selection');
+
           document.querySelectorAll(`#col-${side} .starters-list .player-row`).forEach(row => {
               row.classList.add('selectable-out');
               row.onclick = function() { finalizeSub(this, nameIn, side); };
@@ -280,7 +321,9 @@
 
           rowOut.querySelector('span:first-child').innerText = nameIn;
           rowOut.id = 'player-' + nameIn;
-          document.getElementById('sub-' + nameIn).remove();
+          const subToRemove = document.getElementById('sub-' + nameIn);
+          if(subToRemove) subToRemove.remove();
+
           document.querySelectorAll('.player-row').forEach(row => {
               row.classList.remove('selectable-out');
               row.onclick = null;
@@ -301,39 +344,82 @@
           }
       }
 
-      function startMatch() {
-          document.getElementById('startBtn').style.display = 'none';
-          const interval = setInterval(() => {
-              currentMin++;
-              if(currentMin <= 90) document.getElementById('matchMinute').innerText = currentMin;
-              events.filter(e => e.minute === currentMin).forEach(e => {
-                  const log = document.getElementById('matchLog');
-                  const div = document.createElement('div');
-                  div.className = "p-3 bg-white rounded-lg border-l-4 shadow-sm text-[11px] animate-in fade-in mb-2 border-blue-800";
-                  let icon = "⚽";
-                  if(e.type === 'GOAL') {
-                      if(e.teamName === homeName) homeScore++; else awayScore++;
-                      document.getElementById('homeScore').innerText = homeScore;
-                      document.getElementById('awayScore').innerText = awayScore;
-                      div.className = div.className.replace('border-blue-800', 'border-green-500 bg-green-50');
-                      addIconToPlayer(e.playerName, "⚽");
-                      document.getElementById('scoreboard').classList.add('flash-goal');
-                      setTimeout(() => document.getElementById('scoreboard').classList.remove('flash-goal'), 1000);
-                  }
-                  if(e.type === 'YELLOW_CARD') {
-                      icon = "🟨";
-                      div.className = div.className.replace('border-blue-800', 'border-yellow-500 bg-yellow-50');
-                      addIconToPlayer(e.playerName, "🟨");
-                  }
-                  div.innerHTML = `<div class="flex justify-between font-black text-blue-900 mb-1 italic"><span>${e.minute}'</span><span class="uppercase tracking-tighter">${e.teamName}</span></div><div class="flex items-center gap-2 text-slate-700"><span class="text-base">${icon}</span><span><strong>${e.playerName}</strong>: ${e.description}</span></div>`;
-                  log.prepend(div);
-              });
-              if (currentMin >= 90) {
-                  clearInterval(interval);
-                  document.getElementById('matchMinute').innerText = "FT";
-                  document.getElementById('postMatchActions').classList.remove('hidden');
+      async function startMatch() {
+        document.getElementById('startBtn').style.display = 'none';
+        const panel = document.getElementById('tacticsPanel');
+        if (panel) panel.style.opacity = '1';
+
+        const interval = setInterval(async () => {
+          currentMin++;
+          if(currentMin <= 90) document.getElementById('matchMinute').innerText = currentMin;
+
+          try {
+            const response = await fetch(`/api/match/check-minute?minute=${currentMin}&mentality=${selectedMentality}&homeId=${homeId}&awayId=${awayId}`);
+            const minuteEvents = await response.json();
+
+            minuteEvents.forEach(e => {
+              const log = document.getElementById('matchLog');
+              const div = document.createElement('div');
+
+              let icon = "📢";
+              let bgColor = "bg-white";
+              let borderColor = "border-slate-300";
+              let textColor = "text-slate-700";
+
+              if (e.type === 'GOAL') {
+                  icon = "⚽";
+                  bgColor = "bg-green-50";
+                  borderColor = "border-green-500";
+                  textColor = "text-green-900";
+                  if (e.teamName === homeName) homeScore++; else awayScore++;
+                  document.getElementById('homeScore').innerText = homeScore;
+                  document.getElementById('awayScore').innerText = awayScore;
+                  addIconToPlayer(e.playerName, "⚽");
+                  document.getElementById('scoreboard').classList.add('flash-goal');
+                  setTimeout(() => document.getElementById('scoreboard').classList.remove('flash-goal'), 1000);
+              } else if (e.type === 'YELLOW_CARD') {
+                  icon = "🟨";
+                  bgColor = "bg-yellow-50";
+                  borderColor = "border-yellow-400";
+                  addIconToPlayer(e.playerName, "🟨");
+              } else if (e.type === 'SAVE') {
+                  icon = "🧤";
+                  bgColor = "bg-blue-50";
+                  borderColor = "border-blue-400";
+              } else if (e.type === 'MISS') {
+                  icon = "❌";
+                  bgColor = "bg-red-50";
+                  borderColor = "border-red-300";
               }
-          }, 200);
+
+              div.className = `p-3 ${bgColor} rounded-lg border-l-4 ${borderColor} shadow-sm text-[11px] animate-in fade-in mb-2`;
+              div.innerHTML = `
+                <div class="flex justify-between font-black text-blue-900 mb-1 italic">
+                  <span>${e.minute}'</span>
+                  <span class="uppercase tracking-tighter">${e.teamName}</span>
+                </div>
+                <div class="flex items-center gap-2 ${textColor}">
+                  <span class="text-base">${icon}</span>
+                  <span><strong>${e.playerName}</strong>: ${e.description}</span>
+                </div>`;
+              log.prepend(div);
+            });
+          } catch (error) {
+            console.error("Błąd komunikacji z serwerem");
+          }
+
+          if (currentMin >= 90) {
+              clearInterval(interval);
+              document.getElementById('matchMinute').innerText = "FT";
+              document.getElementById('postMatchActions').classList.remove('hidden');
+
+              fetch(`/api/match/finalize?homeId=${homeId}&awayId=${awayId}&homeScore=${homeScore}&awayScore=${awayScore}`, {
+                  method: 'POST'
+              }).then(response => {
+                  console.log("Wynik zapisany pomyślnie!");
+              });
+          }
+        }, 500);
       }
     </script>
   </body>
