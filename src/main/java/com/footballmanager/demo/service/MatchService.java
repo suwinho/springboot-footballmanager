@@ -50,8 +50,8 @@ public class MatchService {
         double homeDefense = calculateFormationsStrength(home, false) * mods.defenseMod;
         double awayAttack = calculateFormationsStrength(away, true);
         double awayDefense = calculateFormationsStrength(away, false);
-
-        if (rand.nextDouble() < 0.15) {
+        double actionChance = 0.18 * mods.attackMod;
+        if (rand.nextDouble() < actionChance) {
             if (rand.nextDouble() * (homeAttack + awayDefense) < homeAttack) {
                 MatchEvent result = resolveAction(home, away, minute, rand, 1.0);
                 if (result != null) events.add(result);
@@ -77,31 +77,28 @@ public class MatchService {
 
         Player forward = attacker.getPlayers().stream()
                 .filter(Player::isInFirstEleven)
-                .max(Comparator.comparingInt(p -> p.getOffensiveStats() + rand.nextInt(20)))
+                .max(Comparator.comparingInt(p -> p.getOffensiveStats() + rand.nextInt(30))) 
                 .orElse(attacker.getPlayers().get(0));
 
         Player goalie = defender.getPlayers().stream()
                 .filter(Player::isInFirstEleven)
                 .max(Comparator.comparingInt(Player::getDefensiveStats))
                 .orElse(defender.getPlayers().get(0));
-
-        double forwardStaminaMod = 0.7 + (forward.getStamina() / 100.0 * 0.3);
-        double goalieStaminaMod = 0.7 + (goalie.getStamina() / 100.0 * 0.3);
+        double forwardStaminaMod = 0.8 + (forward.getStamina() / 100.0 * 0.2);
+        double goalieStaminaMod = 0.8 + (goalie.getStamina() / 100.0 * 0.2);
+        double finalAttack = teamAttackPower * (forward.getOffensiveStats() / 50.0) * forwardStaminaMod;
+        double finalDefense = teamDefensePower * (goalie.getDefensiveStats() / 60.0) * goalieStaminaMod;
         
-        double finalAttack = teamAttackPower * 1.2 * forwardStaminaMod;
-        double finalDefense = teamDefensePower * goalieStaminaMod;
-        
-        double scoringChance = Math.max(finalAttack - finalDefense, 5.0);
+        double total = finalAttack + finalDefense;
+        double goalChance = (finalAttack / total) * 100;        
         double roll = rand.nextDouble() * 100;
-
-        if (roll < scoringChance * 0.3) {
+        if (roll < goalChance * 0.5) { 
             return new MatchEvent(min, "GOAL", "GOOOLLLL!", attacker.getName(), forward.getLastName());
-        } else if (roll < scoringChance * 0.6) {
+        } else if (roll < goalChance * 0.85) { 
             return new MatchEvent(min, "SAVE", "Bramkarz obronił!", defender.getName(), goalie.getLastName());
-        } else if (roll < 80) {
+        } else {
             return new MatchEvent(min, "MISS", "Niecelny strzał!", attacker.getName(), forward.getLastName());
         }
-        return null;
     }
 
     private double calculateFormationsStrength(Team team, boolean offensive) {

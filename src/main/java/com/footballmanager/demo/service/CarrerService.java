@@ -389,7 +389,7 @@ public class CarrerService {
         Random rand = new Random();
         List<YouthPlayer> marketPlayers = youthPlayerRepository.findAll();
         if (marketPlayers.isEmpty()) return;
-        if (rand.nextDouble() < 0.04) {
+        if (rand.nextDouble() < 0.1) {
             YouthPlayer youth = marketPlayers.stream().max(Comparator.comparingInt(y -> (y.getOverall() + y.getPotential()))).get();
             GameState playerClub = gameStateRepository.findById(1L).orElseThrow();
             List<Team> aiTeams = teamRepository.findAll().stream().filter(t -> !t.getId().equals(playerClub.getUserTeam().getId())).toList();
