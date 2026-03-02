@@ -23,7 +23,7 @@ public class Player {
     private int defensiveStats;
     private boolean isInFirstEleven;
     @Column(nullable = false, columnDefinition = "int default 0")
-    private int marketValue = 0;
+    private long marketValue = 0;
     @Column(name = "stamina")
     private int stamina = 100;
     @Column(name = "potential")
@@ -46,4 +46,6 @@ public class Player {
     @Column(nullable = false)
     @org.hibernate.annotations.ColumnDefault("100")
     private int happiness = 100;
+    @Column(nullable = false, columnDefinition = "int default 0")
+    private int apperances = 0;
 }

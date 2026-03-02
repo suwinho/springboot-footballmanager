@@ -216,33 +216,51 @@ public class CarrerService {
     @Transactional
     public void developPlayers() {
         List<Player> allPlayers = playerRepository.findAll();
+        List<YouthPlayer> allYouths = youthPlayerRepository.findAll();
         Random rand = new Random();
         Team myTeam = gameStateRepository.findById(1L).get().getUserTeam();
-        Long myTeamId = (myTeam != null) ? myTeam.getId() : -1L;
+        Long teamId = (myTeam != null) ? myTeam.getId() : -1L;
 
+        for (YouthPlayer yp : allYouths) {
+            double gap = yp.getPotential() - yp.getOverall();
+            double gapBonus = 1.0 + (gap / 20.0);
+            double youthGrowthChance = 0.04 * gapBonus * ((100.0 - yp.getOverall()) / 100.0);
+            if (rand.nextDouble() < youthGrowthChance) {
+                yp.setOverall(yp.getOverall() + 1);
+                yp.setOffensiveStats(yp.getOffensiveStats() + 1);
+                yp.setDeffensiveStats(yp.getDeffensiveStats() + 1);
+            }
+        }
+        youthPlayerRepository.saveAll(allYouths);
+       
         for (Player p : allPlayers) {
-            if (p.getOverall() < p.getPotential()) {           
-                double baseGrowthChance = (38 - p.getAge()) * 0.006; 
+            int gap = p.getPotential() - p.getOverall();
+            if (gap > 0) {
+                double baseGrowthChance = (40 - p.getAge()) * 0.005;
+                double gapMultiplier = 1.0 + (gap / 20.0);
+                double matchExperienceBonus = Math.min(p.getApperances() * 0.002, 0.06);
                 double difficultyMultiplier = (100.0 - p.getOverall()) / 100.0;
-                double finalChance = baseGrowthChance * difficultyMultiplier;            
+                double finalChance = (baseGrowthChance + matchExperienceBonus) * gapMultiplier * difficultyMultiplier;
                 if (rand.nextDouble() < finalChance) {
                     p.setOverall(p.getOverall() + 1);
-                    if (p.getTeam() != null && p.getTeam().getId().equals(myTeamId)) {
-                        addNews("TRENING: " + p.getLastName() + " wygląda świetnie! (+1 OVR)", "TRAINING");
+                    if (p.getTeam() != null && p.getTeam().getId().equals(teamId)) {
+                        addNews(p.getLastName() + " rozwija się błyskawicznie! (+1 OVR)", "TRAINING");
                     }
                     if (p.getOffensiveStats() > p.getDefensiveStats()) {
                         p.setOffensiveStats(p.getOffensiveStats() + 1);
                     } else {
                         p.setDefensiveStats(p.getDefensiveStats() + 1);
-                    }                
-                    p.setMarketValue(p.getMarketValue() + 2000000);
+                    }
+                    long valueMod = (gap > 10) ? 2500000L : 1000000L;
+                    p.setMarketValue(p.getMarketValue() + valueMod);
                 }
-            } else if (p.getAge() > 33 && rand.nextDouble() < 0.1) {
-                p.setOverall(Math.max(40, p.getOverall() - 1));
-                p.setMarketValue(Math.max(100000, p.getMarketValue() - 1000000));
+                else if (p.getAge() > 33 && rand.nextDouble() < 0.1) {
+                    p.setOverall(Math.max(40, p.getOverall() - 1));
+                    p.setMarketValue(Math.max(50000L, p.getMarketValue() - 500000L));
+                }
             }
+            playerRepository.saveAll(allPlayers);
         }
-        playerRepository.saveAll(allPlayers);
     }
 
     @Transactional
