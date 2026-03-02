@@ -147,6 +147,7 @@ public class ViewController {
         
         carrerService.advanceDay();
         carrerService.generateIncomingOffer();
+        carrerService.aiSignYouthPlayer();
         gameStateRepository.save(state);
         return "redirect:/";
     }

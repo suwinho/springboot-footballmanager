@@ -366,4 +366,35 @@ public class CarrerService {
         return "Success";
     }
 
+    @Transactional
+    public void aiSignYouthPlayer() {
+        Random rand = new Random();
+        List<YouthPlayer> marketPlayers = youthPlayerRepository.findAll();
+        if (marketPlayers.isEmpty()) return;
+        if (rand.nextDouble() < 0.04) {
+            YouthPlayer youth = marketPlayers.stream().max(Comparator.comparingInt(y -> (y.getOverall() + y.getPotential()))).get();
+            GameState playerClub = gameStateRepository.findById(1L).orElseThrow();
+            List<Team> aiTeams = teamRepository.findAll().stream().filter(t -> !t.getId().equals(playerClub.getUserTeam().getId())).toList();
+            if (aiTeams.isEmpty()) return;
+            Team buyer = aiTeams.get(rand.nextInt(aiTeams.size()));
+            Player newPlayer = new Player();
+            newPlayer.setFirstName(youth.getFirstName());
+            newPlayer.setLastName(youth.getLastName());
+            newPlayer.setAge(youth.getAge());
+            newPlayer.setOverall(youth.getOverall());
+            newPlayer.setPotential(youth.getPotential());
+            newPlayer.setMarketValue(1000000);
+            newPlayer.setStamina(100);
+            newPlayer.setTeam(buyer);
+            newPlayer.setInFirstEleven(false);
+            newPlayer.setOffensiveStats(youth.getOffensiveStats());
+            newPlayer.setDefensiveStats(youth.getDeffensiveStats());
+            newPlayer.setInjuryDays(0);
+
+        playerRepository.save(newPlayer);
+        youthPlayerRepository.delete(youth);
+        addNews("TRANSFER: " + buyer.getName() + " ubiegł konkurencję i podpisał kontrakt z młodym " + newPlayer.getLastName() + "!", "YOUTH");
+        }
+    }
+
 }
